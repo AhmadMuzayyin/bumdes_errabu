@@ -16,19 +16,18 @@ class Income extends Model
         return $this->belongsTo(BadanUsaha::class);
     }
 
-    public function setTanggalAttribute()
-    {
-        $this->attributes['tanggal'] = now();
-    }
-
     public function getTanggalAttribute($value)
     {
         return date('d F Y', strtotime($value));
     }
+    public function getOriginalTanggalAttribute($value)
+    {
+        return $this->attributes['tanggal'];
+    }
 
     public function getNominalAttribute($value)
     {
-        return 'Rp. '.number_format($value, 0, ',', '.');
+        return 'Rp. ' . number_format($value, 0, ',', '.');
     }
 
     public function getOriginalNominalAttribute($value)

@@ -11,11 +11,6 @@ class Spending extends Model
 
     protected $guarded = ['id'];
 
-    public function setTanggalAttribute()
-    {
-        $this->attributes['tanggal'] = now();
-    }
-
     public function getTanggalAttribute($value)
     {
         return date('d F Y', strtotime($value));
@@ -28,7 +23,7 @@ class Spending extends Model
 
     public function getNominalAttribute($value)
     {
-        return 'Rp. '.number_format($value, 0, ',', '.');
+        return 'Rp. ' . number_format($value, 0, ',', '.');
     }
 
     public function getOriginalNominalAttribute()

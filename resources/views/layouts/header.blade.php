@@ -9,3 +9,4 @@
 <link rel="stylesheet" href="{{ url('assets/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ url('assets/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
 <link rel="stylesheet" href="{{ url('assets/toastr/toastr.min.css') }}">
+<link rel="stylesheet" href="{{ url('assets/chart.js/Chart.min.css') }}">

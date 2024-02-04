@@ -23,6 +23,7 @@
                                 <th>#</th>
                                 <th>Nama Badan Usaha</th>
                                 <th>Jumlah Dana</th>
+                                <th>Tanggal</th>
                                 <th>created_at</th>
                                 <th>updated_at</th>
                                 <th>
@@ -36,6 +37,7 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $item->badan_usaha->nama }}</td>
                                     <td>{{ $item->nominal }}</td>
+                                    <td>{{ $item->tanggal }}</td>
                                     <td>{{ $item->created_at }}</td>
                                     <td>{{ $item->created_at }}</td>
                                     <td>
@@ -51,7 +53,9 @@
                                                         value="{{ old('badan_usaha_id') }}">
                                                         <option value="">-- Pilih Badan Usaha --</option>
                                                         @foreach ($usaha as $val)
-                                                            <option value="{{ $val->id }}" {{ $val->id == $item->badan_usaha_id ? 'selected' : '' }}>{{ $val->nama }}
+                                                            <option value="{{ $val->id }}"
+                                                                {{ $val->id == $item->badan_usaha_id ? 'selected' : '' }}>
+                                                                {{ $val->nama }}
                                                             </option>
                                                         @endforeach
                                                     </select>
@@ -76,7 +80,18 @@
                                                     </div>
                                                 @enderror
                                             </div>
-                                            <input type="hidden" name="tanggal" value="{{ now() }}">
+                                            <div class="form-group">
+                                                <label for="tanggal">Tanggal</label>
+                                                <input type="date" name="tanggal" id="tanggal"
+                                                    class="form-control @error('tanggal') is-invalid @enderror"
+                                                    placeholder="tanggal"
+                                                    value="{{ old('tanggal') ?? $item->originalTanggal }}">
+                                                @error('tanggal')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
                                         </x-modal-form>
                                         <x-modal-default id="detail-{{ $item->id }}" title="Detail Badan Usaha">
                                             <div class="table-responsive">
@@ -147,7 +162,16 @@
                 </div>
             @enderror
         </div>
-        <input type="hidden" name="tanggal" value="{{ now() }}">
+        <div class="form-group">
+            <label for="tanggal">Tanggal</label>
+            <input type="date" name="tanggal" id="tanggal" class="form-control @error('tanggal') is-invalid @enderror"
+                placeholder="tanggal" value="{{ old('tanggal') }}">
+            @error('tanggal')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
+        </div>
     </x-modal-form>
 @endsection
 @push('js')

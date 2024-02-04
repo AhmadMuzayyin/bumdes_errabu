@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BadanUsahaController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\OperatorController;
@@ -9,9 +10,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)->middleware(['auth', 'verified'])->name('dashboard');
 Route::controller(BadanUsahaController::class)->as('badan_usaha.')->group(function () {
     Route::get('/badan_usaha', 'index')->name('index');
     Route::post('/badan_usaha', 'store')->name('store');
