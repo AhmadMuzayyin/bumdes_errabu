@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\SpendingController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class);
@@ -35,5 +36,11 @@ Route::controller(SpendingController::class)->as('spending.')->group(function ()
     Route::post('/spending/{spending}/update', 'update')->name('update');
     Route::get('/spending/{spending}/destroy', 'destroy')->name('destroy');
 });
+Route::controller(TransactionController::class)->as('transaction.')->group(function () {
+    Route::get('/transaction', 'index')->name('index');
+    Route::post('/transaction', 'store')->name('store');
+    Route::post('/transaction/{transaction}/update', 'update')->name('update');
+    Route::get('/transaction/{transaction}/destroy', 'destroy')->name('destroy');
+});
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
