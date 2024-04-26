@@ -35,9 +35,86 @@
             </div>
         @endif
     </div>
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h3>Dana Masuk</h3>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="incomesTable">
+                            <thead>
+                                <th>#</th>
+                                @if (auth()->user()->role == 'admin')
+                                    <th>Badan Usaha</th>
+                                @endif
+                                <th>Nominal</th>
+                                <th>Tanggal</th>
+                                @if (auth()->user()->role != 'admin')
+                                    <th>Status</th>
+                                @endif
+                            </thead>
+                            <tbody>
+                                @foreach ($manual_income as $pemasukan)
+                                    <tr>
+                                        @if (auth()->user()->role == 'admin')
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $pemasukan->badan_usaha->nama }}</td>
+                                            <td>{{ $pemasukan->nominal }}</td>
+                                            <td>{{ date('d F Y', strtotime($pemasukan->tanggal)) }}</td>
+                                        @else
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $pemasukan->nominal }}</td>
+                                            <td>{{ date('d F Y', strtotime($pemasukan->tanggal)) }}</td>
+                                            <td>
+                                                <ion-icon name="checkmark-circle-outline"
+                                                    class="alert alert-success"></ion-icon>
+                                            </td>
+                                        @endif
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @if (auth()->user()->role == 'admin')
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h3>Dana Keluar</h3>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="spendingsTable">
+                                <thead>
+                                    <th>#</th>
+                                    <th>Tujuan</th>
+                                    <th>Nominal</th>
+                                    <th>Tanggal</th>
+                                </thead>
+                                <tbody>
+                                    @foreach ($manual_spending as $pengeluaran)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $pengeluaran->tujuan }}</td>
+                                            <td>{{ $pengeluaran->nominal }}</td>
+                                            <td>{{ date('d F Y', strtotime($pengeluaran->tanggal)) }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    </div>
 @endsection
 @push('js')
     <script>
+        $(function() {
+            $("#incomesTable").DataTable();
+            $("#spendingsTable").DataTable();
+        });
         var data = {!! json_encode($income) !!}
         var labels = data.map(item => item.bulan)
         var values = data.map(item => item.nominal)

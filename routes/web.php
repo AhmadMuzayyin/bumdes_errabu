@@ -4,6 +4,7 @@ use App\Http\Controllers\BadanUsahaController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncomeController;
+use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\SpendingController;
 use App\Http\Controllers\TransactionController;
@@ -41,6 +42,9 @@ Route::controller(TransactionController::class)->as('transaction.')->group(funct
     Route::post('/transaction', 'store')->name('store');
     Route::post('/transaction/{transaction}/update', 'update')->name('update');
     Route::get('/transaction/{transaction}/destroy', 'destroy')->name('destroy');
+});
+Route::controller(LaporanController::class)->as('laporan.')->group(function () {
+    Route::get('/laporan', 'index')->name('index');
 });
 
 require __DIR__ . '/auth.php';

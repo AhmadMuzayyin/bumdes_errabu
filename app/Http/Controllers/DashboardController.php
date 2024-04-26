@@ -15,16 +15,23 @@ class DashboardController extends Controller
     {
         $income = [];
         $pemasukan = [];
+        $manual_income = [];
+        $manual_spending = [];
         if (Auth::user()->role == 'admin') {
             $pemasukan = Income::selectRaw('SUM(nominal) as total, DATE_FORMAT(tanggal, "%Y-%m") as month')
                 ->groupBy('month')
                 ->get();
+            $manual_income = Income::all();
+            $manual_spending = Spending::all();
         } else {
             $pemasukan = Income::selectRaw('SUM(nominal) as total, DATE_FORMAT(tanggal, "%Y-%m") as month')
                 ->join('badan_usahas', 'badan_usahas.id', '=', 'incomes.badan_usaha_id')
                 ->where('badan_usahas.user_id', Auth::user()->id)
                 ->groupBy('month')
                 ->get();
+            $manual_income = Income::with('badan_usaha')->whereHas('badan_usaha', function ($query) {
+                $query->where('user_id', auth()->user()->id);
+            })->get();
         }
         $startMonth = Carbon::parse($pemasukan->min('month') ?? now())->startOfMonth();
         $endMonth = Carbon::parse($pemasukan->max('month') ?? now())->endOfMonth();
@@ -34,6 +41,7 @@ class DashboardController extends Controller
             $income[] = [
                 'bulan' => $currentMonth->format('F'),
                 'nominal' => $pemasukan->firstWhere('month', $currentMonth->format('Y-m'))['total'] ?? 0,
+                'badan_usaha' => $pemasukan->firstWhere('month', $currentMonth->format('Y-m'))['name'] ?? '',
             ];
             $currentMonth->addMonth();
         }
@@ -52,6 +60,6 @@ class DashboardController extends Controller
             ];
             $current->addMonth();
         }
-        return view('dashboard', compact('income', 'spending'));
+        return view('dashboard', compact('income', 'spending', 'manual_income', 'manual_spending'));
     }
 }
