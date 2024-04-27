@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BadanUsaha;
 use App\Models\Income;
+use App\Models\Spending;
 
 class HomeController extends Controller
 {
@@ -11,6 +12,7 @@ class HomeController extends Controller
     {
         $badan_usaha = BadanUsaha::with('user')->get();
         $keuangan = Income::with('badan_usaha')->get();
-        return view('landing.index', compact('badan_usaha', 'keuangan'));
+        $pengeluaran = Spending::all();
+        return view('landing.index', compact('badan_usaha', 'keuangan', 'pengeluaran'));
     }
 }

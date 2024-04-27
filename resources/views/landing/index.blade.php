@@ -9,8 +9,7 @@
     <meta name="description" content="Bumdes Errabu Bluto Sumenep">
     <meta name="author" content="Pendi">
 
-    <link rel="shortcut icon" href="{{ url('logo.png') }}"
-    type="image/x-icon">
+    <link rel="shortcut icon" href="{{ url('logo.png') }}" type="image/x-icon">
     <!-- FONTS ONLINE -->
     <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Raleway:500,600,700,100,800,900,400,200,300' rel='stylesheet'
@@ -60,9 +59,8 @@
 
             <!-- Logo -->
             <div class="container">
-                <div class="logo"> <a href="#."><img
-                            src="{{ url('logo.png') }}"
-                            width="70" alt=""></a> </div>
+                <div class="logo"> <a href="#."><img src="{{ url('logo.png') }}" width="70"
+                            alt=""></a> </div>
 
                 @include('landing.navbar')
             </div>
@@ -304,7 +302,7 @@
             <section class="sec-100px event" id="keuangan">
                 <div class="container">
                     <div class="tittle">
-                        <h2>KEUANGAN</h2>
+                        <h2>DANA MASUK</h2>
                         <hr>
                         <p>Penghasilan Dari Setiap Badan Usaha Milik Desa Errabu.</p>
                     </div>
@@ -325,6 +323,35 @@
                                         <td>{{ $dana->badan_usaha->nama }}</td>
                                         <td>{{ $dana->badan_usaha->user->name }}</td>
                                         <td>{{ $dana->nominal }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="container">
+                    <div class="tittle">
+                        <h2>DANA KELUAR</h2>
+                        <hr>
+                        <p>Pengeluaran yang dilakukan oleh BUMDes Errabu.</p>
+                    </div>
+                    <div class="row">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Tujuan</th>
+                                    <th>Nominal</th>
+                                    <th>Tanggal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($pengeluaran as $spd)
+                                    <tr>
+                                        <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $spd->tujuan }}</td>
+                                        <td>{{ $spd->nominal }}</td>
+                                        <td>{{ date('d F Y', strtotime($spd->tanggal)) }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
