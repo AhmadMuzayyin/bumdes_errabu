@@ -13,15 +13,206 @@
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
                     data-accordion="false">
-                    <li class="nav-item">
+                    @if (auth()->user()->role == 'admin')
+                        <li class="nav-item">
                         <a href="{{ route('dashboard') }}"
-                            class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+                            class="nav-link {{ request()->routeIs('*.dashboard') || request()->routeIs('dashboard') ? 'active' : '' }}">
                             <ion-icon class="nav-icon" name="home"></ion-icon>
                             <p>
                                 Dashboard
                             </p>
                         </a>
                     </li>
+                    @endif
+                    
+                    {{-- Menu Simpan Pinjam --}}
+                    @if (auth()->user()->role == 'operator simpan pinjam')
+                    <li class="nav-item">
+                            <a href="{{ route('simpan-pinjam.dashboard') }}"
+                                class="nav-link {{ request()->routeIs('simpan-pinjam.dashboard') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="home"></ion-icon>
+                                <p>
+                                    Dashboard
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('nasabah.index') }}"
+                                class="nav-link {{ request()->routeIs('nasabah.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="people"></ion-icon>
+                                <p>
+                                    Nasabah
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('simpanan.*') || request()->routeIs('pengambilan-simpanan.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('simpanan.*') || request()->routeIs('pengambilan-simpanan.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="wallet"></ion-icon>
+                                <p>
+                                    Simpanan
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('simpanan.index') }}"
+                                        class="nav-link {{ request()->routeIs('simpanan.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Simpanan</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('pengambilan-simpanan.index') }}"
+                                        class="nav-link {{ request()->routeIs('pengambilan-simpanan.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Pengambilan Simpanan</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item {{ request()->routeIs('pinjaman.*') || request()->routeIs('pengembalian-pinjaman.*') ? 'menu-open' : '' }}">
+                            <a href="#" class="nav-link {{ request()->routeIs('pinjaman.*') || request()->routeIs('pengembalian-pinjaman.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="cash"></ion-icon>
+                                <p>
+                                    Pinjaman
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('pinjaman.index') }}"
+                                        class="nav-link {{ request()->routeIs('pinjaman.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Pinjaman</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('pengembalian-pinjaman.index') }}"
+                                        class="nav-link {{ request()->routeIs('pengembalian-pinjaman.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Pengembalian</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('pengeluaran.index') }}"
+                                class="nav-link {{ request()->routeIs('pengeluaran.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="trending-down"></ion-icon>
+                                <p>
+                                    Pengeluaran
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('setting-pinjaman.index') }}"
+                                class="nav-link {{ request()->routeIs('setting-pinjaman.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="settings"></ion-icon>
+                                <p>
+                                    Setting Pinjaman
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('laporan.index') }}"
+                                class="nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="document-text"></ion-icon>
+                                <p>
+                                    Laporan
+                                </p>
+                            </a>
+                        </li>
+                    @endif
+
+                    {{-- Menu Operator Foto Copy --}}
+                    @if (auth()->user()->role == 'operator foto copy')
+                        <li class="nav-item">
+                            <a href="{{ route('fotocopy.harga.index') }}"
+                                class="nav-link {{ request()->routeIs('fotocopy.harga.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="pricetag"></ion-icon>
+                                <p>
+                                    Harga
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('fotocopy.pembayaran.index') }}"
+                                class="nav-link {{ request()->routeIs('fotocopy.pembayaran.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="cash"></ion-icon>
+                                <p>
+                                    Pembayaran
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('fotocopy.pengeluaran.index') }}"
+                                class="nav-link {{ request()->routeIs('fotocopy.pengeluaran.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="trending-down"></ion-icon>
+                                <p>
+                                    Pengeluaran
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('fotocopy.laporan.index') }}"
+                                class="nav-link {{ request()->routeIs('fotocopy.laporan.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="document-text"></ion-icon>
+                                <p>
+                                    Laporan
+                                </p>
+                            </a>
+                        </li>
+                    @endif
+
+                    {{-- Menu Operator BRI Link --}}
+                    @if (auth()->user()->role == 'operator brilink')
+                        <li class="nav-item">
+                            <a href="{{ route('brilink.dashboard') }}"
+                                class="nav-link {{ request()->routeIs('brilink.dashboard') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="home"></ion-icon>
+                                <p>
+                                    Dashboard
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('brilink.setor-tunai.index') }}"
+                                class="nav-link {{ request()->routeIs('brilink.setor-tunai.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="arrow-up"></ion-icon>
+                                <p>
+                                    Setor Tunai
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('brilink.tarik-tunai.index') }}"
+                                class="nav-link {{ request()->routeIs('brilink.tarik-tunai.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="arrow-down"></ion-icon>
+                                <p>
+                                    Tarik Tunai
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('brilink.bayar-tagihan-pln.index') }}"
+                                class="nav-link {{ request()->routeIs('brilink.bayar-tagihan-pln.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="flash"></ion-icon>
+                                <p>
+                                    Bayar Tagihan PLN
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('brilink.laporan.index') }}"
+                                class="nav-link {{ request()->routeIs('brilink.laporan.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="document-text"></ion-icon>
+                                <p>
+                                    Laporan
+                                </p>
+                            </a>
+                        </li>
+                    @endif
+                    
                     @if (auth()->user()->role == 'admin')
                         <li class="nav-item">
                             <a href="{{ route('operator.index') }}"
@@ -51,16 +242,16 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('laporan.index') }}"
+                            <a href="{{ route('laporan.umum.index') }}"
                                 class="nav-link {{ request()->routeIs('laporan.*') ? 'active' : '' }}">
-                                <ion-icon name="documents-outline"></ion-icon>
+                                <ion-icon class="nav-icon" name="document-text"></ion-icon>
                                 <p>
                                     Laporan
                                 </p>
                             </a>
                         </li>
                     @endif
-                    @if (auth()->user()->role == 'operator')
+                    @if (auth()->user()->role == 'operator' && auth()->user()->name != 'simpanpinjam')
                         <li class="nav-item">
                             <a href="{{ route('income.index') }}"
                                 class="nav-link {{ request()->routeIs('income.*') ? 'active' : '' }}">

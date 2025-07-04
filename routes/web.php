@@ -43,8 +43,11 @@ Route::controller(TransactionController::class)->as('transaction.')->group(funct
     Route::post('/transaction/{transaction}/update', 'update')->name('update');
     Route::get('/transaction/{transaction}/destroy', 'destroy')->name('destroy');
 });
-Route::controller(LaporanController::class)->as('laporan.')->group(function () {
-    Route::get('/laporan', 'index')->name('index');
+Route::controller(LaporanController::class)->middleware(['auth', 'admin'])->as('laporan.umum.')->group(function () {
+    Route::get('/laporan-umum', 'index')->name('index');
+    Route::post('/laporan-umum/export-pdf', 'exportPdf')->name('export-pdf');
 });
 
 require __DIR__ . '/auth.php';
+require __DIR__ . '/simpan_pinjam.php';
+require __DIR__ . '/fotocopy.php';

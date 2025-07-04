@@ -9,7 +9,7 @@ class OperatorController extends Controller
 {
     public function index()
     {
-        $operator = User::where('role', 'operator')->get();
+        $operator = User::whereIn('role', ['operator simpan pinjam', 'operator foto copy', 'operator brilink'])->get();
 
         return view('operator.index', compact('operator'));
     }

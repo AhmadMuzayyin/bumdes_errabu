@@ -87,7 +87,19 @@
                                                     placeholder="Password Operator"
                                                     value="{{ old('password_confirmation') }}">
                                             </div>
-                                            <input type="hidden" name="role" value="operator">
+                                            <div class="form-group">
+                                                <label for="role">Role</label>
+                                                <select name="role" id="role" class="form-control @error('role') is-invalid @enderror">
+                                                    <option value="operator simpan pinjam" {{ $item->role == 'operator simpan pinjam' ? 'selected' : '' }}>Operator Simpan Pinjam</option>
+                                                    <option value="operator foto copy" {{ $item->role == 'operator foto copy' ? 'selected' : '' }}>Operator Foto Copy</option>
+                                                    <option value="operator brilink" {{ $item->role == 'operator brilink' ? 'selected' : '' }}>Operator BRILink</option>
+                                                </select>
+                                                @error('role')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
                                             <p class="text-danger text-sm">
                                                 *Tulis password lama jika tidak ingin mengubah password, tulis password baru jika ingin mengubah password
                                             </p>
@@ -138,7 +150,19 @@
             <input type="password" name="password_confirmation" id="password_confirmation"
                 class="form-control" placeholder="Password Operator">
         </div>
-        <input type="hidden" name="role" value="operator">
+        <div class="form-group">
+            <label for="role">Role</label>
+            <select name="role" id="role" class="form-control @error('role') is-invalid @enderror">
+                <option value="operator simpan pinjam">Operator Simpan Pinjam</option>
+                <option value="operator foto copy">Operator Foto Copy</option>
+                <option value="operator brilink">Operator BRILink</option>
+            </select>
+            @error('role')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
+        </div>
     </x-modal-form>
 @endsection
 @push('js')

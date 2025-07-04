@@ -13,6 +13,16 @@ class DashboardController extends Controller
 {
     public function __invoke()
     {
+        // Redirect operator simpanpinjam ke dashboard simpan pinjam
+        if (Auth::user()->role == 'operator simpan pinjam') {
+            return redirect()->route('simpan-pinjam.dashboard');
+        }
+
+        // Redirect operator foto copy ke dashboard foto copy
+        if (Auth::user()->role == 'operator foto copy') {
+            return redirect()->route('fotocopy.dashboard');
+        }
+
         $income = [];
         $pemasukan = [];
         $manual_income = [];

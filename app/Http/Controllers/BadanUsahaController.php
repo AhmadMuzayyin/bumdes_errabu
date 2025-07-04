@@ -11,7 +11,7 @@ class BadanUsahaController extends Controller
     public function index()
     {
         $badan_usaha = BadanUsaha::all();
-        $operator = User::where('role', 'operator')->get();
+        $operator = User::where('role', '!=', 'admin')->get();
 
         return view('badan_usaha.index', compact('badan_usaha', 'operator'));
     }

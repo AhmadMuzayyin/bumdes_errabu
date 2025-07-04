@@ -35,6 +35,18 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+
+            // Rute untuk Simpan Pinjam
+            Route::middleware('web')
+                ->group(base_path('routes/simpan_pinjam.php'));
+
+            // Rute untuk Foto Copy
+            Route::middleware('web')
+                ->group(base_path('routes/fotocopy.php'));
+
+            // Rute untuk BRI Link
+            Route::middleware('web')
+                ->group(base_path('routes/brilink.php'));
         });
     }
 }
