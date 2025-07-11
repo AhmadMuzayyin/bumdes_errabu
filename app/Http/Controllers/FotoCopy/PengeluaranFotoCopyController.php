@@ -5,6 +5,7 @@ namespace App\Http\Controllers\FotoCopy;
 use App\Http\Controllers\Controller;
 use App\Models\PengeluaranFotoCopy;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PengeluaranFotoCopyController extends Controller
 {
@@ -31,10 +32,12 @@ class PengeluaranFotoCopyController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             PengeluaranFotoCopy::create($request->all());
-
+            DB::commit();
             return redirect()->back()->with('success', 'Pengeluaran berhasil ditambahkan');
         } catch (\Throwable $th) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'Pengeluaran gagal ditambahkan: ' . $th->getMessage());
         }
     }
@@ -52,10 +55,12 @@ class PengeluaranFotoCopyController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $pengeluaran->update($request->all());
-
+            DB::commit();
             return redirect()->back()->with('success', 'Pengeluaran berhasil diubah');
         } catch (\Throwable $th) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'Pengeluaran gagal diubah: ' . $th->getMessage());
         }
     }

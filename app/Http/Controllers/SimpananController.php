@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Income;
 use Illuminate\Http\Request;
 use App\Models\Simpanan;
 use App\Models\Nasabah;
@@ -49,7 +50,12 @@ class SimpananController extends Controller
         // Mulai transaksi database untuk memastikan konsistensi data
         DB::beginTransaction();
         try {
-            Simpanan::create($request->all());
+            $simpanan = Simpanan::create($request->all());
+            Income::create([
+                'badan_usaha_id' => auth()->user()->badan_usaha->id,
+                'nominal' => $simpanan->original_nominal,
+                'tanggal' => $simpanan->tgl_simpan,
+            ]);
             DB::commit();
             return redirect()->route('simpanan.index')
                 ->with('success', 'Data simpanan berhasil ditambahkan');
@@ -103,6 +109,13 @@ class SimpananController extends Controller
         DB::beginTransaction();
         try {
             $simpanan->update($request->all());
+            Income::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+                ->where('tanggal', $request->tgl_simpan)
+                ->where('nominal', $request->original_nominal)
+                ->update([
+                    'nominal' => $request->nominal,
+                    'tanggal' => $request->tgl_simpan,
+                ]);
             DB::commit();
             return redirect()->route('simpanan.index')
                 ->with('success', 'Data simpanan berhasil diperbarui');
@@ -114,14 +127,9 @@ class SimpananController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $simpanan = Simpanan::findOrFail($id);
-
-        // Mulai transaksi database untuk memastikan konsistensi data
         DB::beginTransaction();
         try {
             $simpanan->delete();
@@ -133,17 +141,5 @@ class SimpananController extends Controller
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
-    }
-
-    /**
-     * Display simpanan by kategori
-     */
-    public function kategori($kategori)
-    {
-        $simpanan = Simpanan::with('nasabah')
-            ->where('kategori', $kategori)
-            ->latest()
-            ->get();
-        return view('simpan-pinjam.simpanan.kategori', compact('simpanan', 'kategori'));
     }
 }

@@ -159,10 +159,6 @@
                                 <th>Total Pengeluaran</th>
                                 <td>{{ number_format($totalPengeluaran ?? 0, 0, ',', '.') }}</td>
                             </tr>
-                            <tr>
-                                <th>Saldo</th>
-                                <td>{{ number_format(($totalPembayaran ?? 0) - ($totalPengeluaran ?? 0), 0, ',', '.') }}</td>
-                            </tr>
                         </table>
                     </div>
                 </div>

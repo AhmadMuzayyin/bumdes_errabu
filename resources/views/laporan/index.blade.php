@@ -58,37 +58,6 @@
                         </div>
                     </div>
 
-                    <!-- Summary Cards -->
-                    <div class="row mb-4">
-                        <div class="col-md-4">
-                            <div class="info-box bg-success">
-                                <span class="info-box-icon"><i class="fas fa-money-bill"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Total Dana Masuk</span>
-                                    <span class="info-box-number">Rp {{ number_format($totalDanaMasuk, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-box bg-danger">
-                                <span class="info-box-icon"><i class="fas fa-shopping-cart"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Total Dana Keluar</span>
-                                    <span class="info-box-number">Rp {{ number_format($totalDanaKeluar, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="info-box bg-info">
-                                <span class="info-box-icon"><i class="fas fa-wallet"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Saldo</span>
-                                    <span class="info-box-number">Rp {{ number_format($totalDanaMasuk - $totalDanaKeluar, 0, ',', '.') }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Tabs for different reports -->
                     <ul class="nav nav-tabs" id="reportTabs" role="tablist">
                         <li class="nav-item">
@@ -139,10 +108,6 @@
                                                 <tr>
                                                     <th>Sumber</th>
                                                     <th class="text-right">Jumlah</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Umum</td>
-                                                    <td class="text-right">Rp {{ number_format($summaryDanaMasuk['umum'] ?? 0, 0, ',', '.') }}</td>
                                                 </tr>
                                                 <tr>
                                                     <td>Simpan Pinjam</td>
@@ -258,7 +223,7 @@
                                                     <td>{{ Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
                                                     <td>{{ $item->tujuan }}</td>
                                                     <td>{{ $item->deskripsi ?? '-' }}</td>
-                                                    <td class="text-right">Rp {{ number_format($item->nominal, 0, ',', '.') }}</td>
+                                                    <td class="text-right">{{ $item->nominal }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -269,7 +234,6 @@
 
                         <!-- Simpan Pinjam Tab -->
                         <div class="tab-pane fade" id="simpan-pinjam" role="tabpanel">
-                            <!-- Nested tabs for Simpan Pinjam -->
                             <ul class="nav nav-tabs" id="simpanPinjamTabs" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link active" id="simpanan-tab" data-toggle="tab" href="#simpanan" role="tab">Simpanan</a>
@@ -290,7 +254,6 @@
                             
                             <!-- Simpan Pinjam Tab Content -->
                             <div class="tab-content mt-3" id="simpanPinjamTabsContent">
-                                <!-- Simpanan -->
                                 <div class="tab-pane fade show active" id="simpanan" role="tabpanel">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-striped datatable">

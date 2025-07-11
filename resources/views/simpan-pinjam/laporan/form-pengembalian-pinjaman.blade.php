@@ -4,7 +4,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Laporan Pengambilan Simpanan</h3>
+                <h3 class="card-title">Laporan Pengembalian Pinjaman</h3>
                 <div class="card-tools">
                     <a href="{{ route('laporan.index') }}" class="btn btn-sm btn-default">
                         <i class="fas fa-arrow-left"></i> Kembali
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form action="{{ route('laporan.pengambilan-simpanan') }}" method="post">
+                <form action="{{ route('laporan.pengembalian-pinjaman') }}" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-md-6">
@@ -33,6 +33,15 @@
                                 @enderror
                             </div>
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="kategori">Kategori Pinjaman</label>
+                        <select class="form-control" id="kategori" name="kategori">
+                            <option value="semua">Semua Kategori</option>
+                            @foreach($kategoriList as $id => $nama)
+                            <option value="{{ $id }}">{{ $nama }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="tipe_laporan">Format Laporan</label>

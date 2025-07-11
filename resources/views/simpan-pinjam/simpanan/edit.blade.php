@@ -43,6 +43,7 @@
                         <div class="form-group">
                             <label for="nominal">Nominal (Rp)</label>
                             <input type="number" name="nominal" id="nominal" class="form-control" value="{{ old('nominal', $simpanan->original_nominal) }}" required min="0">
+                            <input type="hidden" name="original_nominal" value="{{ $simpanan->original_nominal }}">
                         </div>
                         <div class="form-group">
                             <label for="tgl_simpan">Tanggal</label>

@@ -57,7 +57,23 @@ Route::put('setting-pinjaman/{settingPinjaman}', [SettingPinjamanController::cla
 Route::prefix('laporan')->middleware(['auth', 'simpan.pinjam'])->name('laporan.')->group(function () {
     Route::get('/', [LaporanSimpanPinjamController::class, 'index'])->name('index');
 
-    // API endpoints untuk laporan
+    // Form laporan (simpan untuk compatibility)
+    Route::get('form-simpanan', [LaporanSimpanPinjamController::class, 'formSimpanan'])->name('form-simpanan');
+    Route::get('form-pengambilan-simpanan', [LaporanSimpanPinjamController::class, 'formPengambilanSimpanan'])->name('form-pengambilan-simpanan');
+    Route::get('form-pinjaman', [LaporanSimpanPinjamController::class, 'formPinjaman'])->name('form-pinjaman');
+    Route::get('form-pengembalian-pinjaman', [LaporanSimpanPinjamController::class, 'formPengembalianPinjaman'])->name('form-pengembalian-pinjaman');
+    Route::get('form-pengeluaran', [LaporanSimpanPinjamController::class, 'formPengeluaran'])->name('form-pengeluaran');
+    Route::get('form-rekap-simpanan', [LaporanSimpanPinjamController::class, 'formRekapSimpanan'])->name('form-rekap-simpanan');
+    Route::get('form-rekap-pinjaman', [LaporanSimpanPinjamController::class, 'formRekapPinjaman'])->name('form-rekap-pinjaman');
+
+    // API endpoints untuk data laporan
+    Route::post('api/simpanan', [LaporanSimpanPinjamController::class, 'apiSimpanan'])->name('api.simpanan');
+    Route::post('api/pengambilan', [LaporanSimpanPinjamController::class, 'apiPengambilan'])->name('api.pengambilan');
+    Route::post('api/pinjaman', [LaporanSimpanPinjamController::class, 'apiPinjaman'])->name('api.pinjaman');
+    Route::post('api/pengembalian', [LaporanSimpanPinjamController::class, 'apiPengembalian'])->name('api.pengembalian');
+    Route::post('api/pengeluaran', [LaporanSimpanPinjamController::class, 'apiPengeluaran'])->name('api.pengeluaran');
+
+    // Endpoints untuk laporan PDF
     Route::post('update', [LaporanSimpanPinjamController::class, 'updateLaporan'])->name('update');
     Route::post('simpanan', [LaporanSimpanPinjamController::class, 'laporanSimpanan'])->name('simpanan');
     Route::post('pengambilan-simpanan', [LaporanSimpanPinjamController::class, 'laporanPengambilanSimpanan'])->name('pengambilan-simpanan');

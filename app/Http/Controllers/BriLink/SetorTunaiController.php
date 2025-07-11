@@ -4,8 +4,10 @@ namespace App\Http\Controllers\BriLink;
 
 use App\Http\Controllers\Controller;
 use App\Models\BriLinkSetorTunai;
+use App\Models\Income;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SetorTunaiController extends Controller
 {
@@ -40,10 +42,23 @@ class SetorTunaiController extends Controller
             'tgl_setor_tunai' => 'required|date'
         ]);
 
-        BriLinkSetorTunai::create($request->all());
-
-        return redirect()->route('brilink.setor-tunai.index')
-            ->with('success', 'Data setor tunai berhasil ditambahkan');
+        try {
+            DB::beginTransaction();
+            BriLinkSetorTunai::create($request->all());
+            Income::create([
+                'badan_usaha_id' => auth()->user()->badan_usaha->id,
+                'tanggal' => $request->tgl_setor_tunai,
+                'nominal' => $request->nominal,
+            ]);
+            DB::commit();
+            return redirect()->route('brilink.setor-tunai.index')
+                ->with('success', 'Data setor tunai berhasil ditambahkan');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withErrors(['error' => 'Gagal menambahkan data setor tunai: ' . $e->getMessage()])
+                ->withInput();
+        }
     }
 
     /**
@@ -75,10 +90,24 @@ class SetorTunaiController extends Controller
             'tgl_setor_tunai' => 'required|date'
         ]);
 
-        $setor_tunai->update($request->all());
-
-        return redirect()->route('brilink.setor-tunai.index')
-            ->with('success', 'Data setor tunai berhasil diperbarui');
+        try {
+            DB::beginTransaction();
+            $setor_tunai->update($request->all());
+            Income::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+                ->where('tanggal', $setor_tunai->tgl_setor_tunai)
+                ->update([
+                    'nominal' => $request->nominal,
+                    'tanggal' => Carbon::parse($request->tgl_setor_tunai),
+                ]);
+            DB::commit();
+            return redirect()->route('brilink.setor-tunai.index')
+                ->with('success', 'Data setor tunai berhasil diperbarui');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withErrors(['error' => 'Gagal memperbarui data setor tunai: ' . $th->getMessage()])
+                ->withInput();
+        }
     }
 
     /**
@@ -86,9 +115,17 @@ class SetorTunaiController extends Controller
      */
     public function destroy(BriLinkSetorTunai $setor_tunai)
     {
-        $setor_tunai->delete();
-
-        return redirect()->route('brilink.setor-tunai.index')
-            ->with('success', 'Data setor tunai berhasil dihapus');
+        try {
+            DB::beginTransaction();
+            $setor_tunai->delete();
+            DB::commit();
+            return redirect()->route('brilink.setor-tunai.index')
+                ->with('success', 'Data setor tunai berhasil dihapus');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return redirect()->back()
+                ->withErrors(['error' => 'Gagal menghapus data setor tunai: ' . $th->getMessage()])
+                ->withInput();
+        }
     }
 }

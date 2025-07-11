@@ -12,9 +12,15 @@ class PengembalianPinjamans extends Model
     protected $guarded = ['id'];
 
     // Relasi dengan Pinjaman
-    public function pinjamans()
+    public function pinjaman()
     {
-        return $this->belongsTo(Pinjamans::class);
+        return $this->belongsTo(Pinjamans::class, 'pinjamans_id');
+    }
+
+    // Relasi dengan Nasabah (melalui Pinjaman)
+    public function nasabah()
+    {
+        return $this->belongsTo(Nasabah::class, 'nasabah_id');
     }
 
     // Format nominal cicilan

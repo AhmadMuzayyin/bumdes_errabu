@@ -4,7 +4,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">Laporan Pengambilan Simpanan</h3>
+                <h3 class="card-title">Laporan Pengeluaran Simpan Pinjam</h3>
                 <div class="card-tools">
                     <a href="{{ route('laporan.index') }}" class="btn btn-sm btn-default">
                         <i class="fas fa-arrow-left"></i> Kembali
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <form action="{{ route('laporan.pengambilan-simpanan') }}" method="post">
+                <form action="{{ route('laporan.pengeluaran') }}" method="post">
                     @csrf
                     <div class="row">
                         <div class="col-md-6">

@@ -30,7 +30,7 @@
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->jumlah }}</td>
-                                        <td>{{ number_format($item->total_pembayaran, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($item->total_pembayaran, 0, ',', '.') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tgl_pembayaran)->format('d/m/Y') }}</td>
                                         <td>{{ $item->created_at->format('d/m/Y H:i') }}</td>
                                         <td>{{ $item->updated_at->format('d/m/Y H:i') }}</td>

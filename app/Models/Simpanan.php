@@ -11,27 +11,28 @@ class Simpanan extends Model
 
     protected $guarded = ['id'];
 
-    // Relasi dengan Nasabah
     public function nasabah()
     {
         return $this->belongsTo(Nasabah::class);
     }
 
-    // Format nominal
     public function getNominalAttribute($value)
     {
         return 'Rp. ' . number_format($value, 0, ',', '.');
     }
 
-    // Mendapatkan nilai asli nominal
     public function getOriginalNominalAttribute()
     {
         return $this->attributes['nominal'];
     }
 
-    // Format tanggal
     public function getTglSimpanFormatedAttribute($value)
     {
-        return date('d F Y', strtotime($value));
+        return date('d F Y', $value);
+    }
+
+    public function scopeWhereTipeTransaksi($query, $kategori)
+    {
+        return $query;
     }
 }

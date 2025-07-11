@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Pengeluaran</title>
+    <title>Laporan Pengambilan Simpanan</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -60,7 +60,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="title">LAPORAN PENGELUARAN SIMPAN PINJAM</div>
+        <div class="title">LAPORAN PENGAMBILAN SIMPANAN</div>
         <div class="subtitle">BUMDes Errabu</div>
     </div>
     
@@ -81,26 +81,24 @@
         <thead>
             <tr>
                 <th width="5%">No</th>
-                <th width="15%">Kode</th>
-                <th width="15%">Tanggal</th>
-                <th width="25%">Jumlah</th>
-                <th width="40%">Tujuan</th>
+                <th width="35%">Nama Nasabah</th>
+                <th width="20%">Tanggal</th>
+                <th width="40%">Nominal</th>
             </tr>
         </thead>
         <tbody>
-            @if(count($pengeluaran) > 0)
-                @foreach($pengeluaran as $index => $p)
+            @if(count($pengambilan) > 0)
+                @foreach($pengambilan as $index => $p)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ $p->kode }}</td>
-                    <td>{{ date('d/m/Y', strtotime($p->attributes['tgl_pengeluaran'])) }}</td>
-                    <td class="text-right">{{ $p->jumlah }}</td>
-                    <td>{{ $p->tujuan ?? '-' }}</td>
+                    <td>{{ $p->nasabah->nama }}</td>
+                    <td>{{ date('d/m/Y', strtotime($p->attributes['tgl_pengambilan'])) }}</td>
+                    <td class="text-right">{{ $p->nominal }}</td>
                 </tr>
                 @endforeach
             @else
                 <tr>
-                    <td colspan="5" class="text-center">Tidak ada data</td>
+                    <td colspan="4" class="text-center">Tidak ada data</td>
                 </tr>
             @endif
         </tbody>
@@ -108,7 +106,6 @@
             <tr class="total">
                 <td colspan="3" class="text-right"><strong>TOTAL</strong></td>
                 <td class="text-right"><strong>Rp {{ number_format($total, 0, ',', '.') }}</strong></td>
-                <td></td>
             </tr>
         </tfoot>
     </table>

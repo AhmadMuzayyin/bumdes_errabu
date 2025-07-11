@@ -37,42 +37,6 @@
                         class="fas fa-arrow-circle-right"></i></a>
             </div>
         </div>
-        <div class="col-lg-3 col-6">
-            <div class="small-box bg-success">
-                <div class="inner">
-                    <h3>{{ number_format($totalPembayaran - $totalPengeluaran, 0, ',', '.') }}</h3>
-                    <p>Saldo</p>
-                </div>
-                <div class="icon">
-                    <i class="ion ion-pie-graph"></i>
-                </div>
-                <a href="{{ route('fotocopy.laporan.index') }}" class="small-box-footer">More info <i
-                        class="fas fa-arrow-circle-right"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Grafik Pembayaran</h3>
-                </div>
-                <div class="card-body">
-                    <canvas id="pembayaranChart"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Grafik Pengeluaran</h3>
-                </div>
-                <div class="card-body">
-                    <canvas id="pengeluaranChart"></canvas>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="row">

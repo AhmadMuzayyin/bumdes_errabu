@@ -28,14 +28,22 @@ class PengambilanSimpanan extends Model
     {
         return $this->attributes['nominal'];
     }
+
     // Mendapatkan nilai asli tgl pengambilan
     public function getOriginalTglPengambilanAttribute()
     {
         return $this->attributes['tgl_pengambilan'];
     }
+
     // Format tanggal
     public function getTglPengambilanAttribute($value)
     {
         return date('d F Y', strtotime($value));
+    }
+
+    // Scope untuk kategori (berdasarkan aturan bisnis, kategori tidak ada dalam migration)
+    public function scopeWhereTipeTransaksi($query, $kategori)
+    {
+        return $query; // Sebenarnya tanpa filter kategori karena tidak ada kolom kategori
     }
 }

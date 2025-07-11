@@ -13,43 +13,73 @@ use App\Models\SettingPinjaman;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Support\Str;
 
 class LaporanSimpanPinjamController extends Controller
 {
     /**
      * Tampilan halaman laporan
      */
-    public function index(Request $request)
+    public function index()
     {
-        // Ambil semua data nasabah untuk dropdown filter
-        $nasabah = Nasabah::orderBy('nama', 'asc')->get();
-        $nasabahId = $request->query('nasabah_id', '');
+        return view('simpan-pinjam.laporan.index');
+    }
 
-        // Variabel default untuk view
-        $tanggalAwal = $request->query('tanggal_awal', Carbon::now()->startOfMonth()->format('Y-m-d'));
-        $tanggalAkhir = $request->query('tanggal_akhir', Carbon::now()->format('Y-m-d'));
+    /**
+     * Form laporan simpanan
+     */
+    public function formSimpanan()
+    {
+        return view('simpan-pinjam.laporan.form-simpanan');
+    }
 
-        // Ambil data awal jika ada filter tanggal atau nasabah
-        $transaksiSimpanan = [];
-        $transaksiPinjaman = [];
-        $pengeluaran = [];
+    /**
+     * Form laporan pengambilan simpanan
+     */
+    public function formPengambilanSimpanan()
+    {
+        return view('simpan-pinjam.laporan.form-pengambilan-simpanan');
+    }
 
-        if ($request->has('tanggal_awal') || $request->has('tanggal_akhir')) {
-            $transaksiSimpanan = $this->getTransaksiSimpanan($tanggalAwal, $tanggalAkhir, $nasabahId);
-            $transaksiPinjaman = $this->getTransaksiPinjaman($tanggalAwal, $tanggalAkhir, $nasabahId);
-            $pengeluaran = $this->getPengeluaran($tanggalAwal, $tanggalAkhir);
-        }
+    /**
+     * Form laporan pinjaman
+     */
+    public function formPinjaman()
+    {
+        $kategoriList = SettingPinjaman::pluck('nama_kategori', 'id')->toArray();
+        return view('simpan-pinjam.laporan.form-pinjaman', compact('kategoriList'));
+    }
 
-        return view('simpan-pinjam.laporan.index', compact(
-            'nasabah',
-            'nasabahId',
-            'tanggalAwal',
-            'tanggalAkhir',
-            'transaksiSimpanan',
-            'transaksiPinjaman',
-            'pengeluaran'
-        ));
+    /**
+     * Form laporan pengembalian pinjaman
+     */
+    public function formPengembalianPinjaman()
+    {
+        $kategoriList = SettingPinjaman::pluck('nama_kategori', 'id')->toArray();
+        return view('simpan-pinjam.laporan.form-pengembalian-pinjaman', compact('kategoriList'));
+    }
+
+    /**
+     * Form laporan pengeluaran
+     */
+    public function formPengeluaran()
+    {
+        return view('simpan-pinjam.laporan.form-pengeluaran');
+    }
+
+    /**
+     * Form rekap simpanan
+     */
+    public function formRekapSimpanan()
+    {
+        return view('simpan-pinjam.laporan.form-rekap-simpanan');
+    }
+
+    /**
+     * Form rekap pinjaman
+     */
+    public function formRekapPinjaman()
+    {
+        return view('simpan-pinjam.laporan.form-rekap-pinjaman');
     }
 
     /**
@@ -69,14 +99,16 @@ class LaporanSimpanPinjamController extends Controller
         $kategori = $request->kategori;
 
         $query = Simpanan::with('nasabah')
-            ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir]);
+            ->whereBetween('tgl_simpan', [$tanggalAwal, $tanggalAkhir]);
 
         if ($kategori && $kategori !== 'semua') {
             $query->where('kategori', $kategori);
         }
 
         $simpanan = $query->get();
-        $total = $simpanan->sum('nominal');
+        $total = $simpanan->sum(function ($item) {
+            return $item->getOriginalNominalAttribute();
+        });
 
         if ($request->tipe_laporan === 'web') {
             return view('simpan-pinjam.laporan.simpanan', compact(
@@ -115,14 +147,16 @@ class LaporanSimpanPinjamController extends Controller
         $kategori = $request->kategori;
 
         $query = PengambilanSimpanan::with('nasabah')
-            ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir]);
+            ->whereBetween('tgl_pengambilan', [$tanggalAwal, $tanggalAkhir]);
 
         if ($kategori && $kategori !== 'semua') {
             $query->where('kategori', $kategori);
         }
 
         $pengambilan = $query->get();
-        $total = $pengambilan->sum('nominal');
+        $total = $pengambilan->sum(function ($item) {
+            return $item->getOriginalNominalAttribute();
+        });
 
         if ($request->tipe_laporan === 'web') {
             return view('simpan-pinjam.laporan.pengambilan-simpanan', compact(
@@ -153,7 +187,7 @@ class LaporanSimpanPinjamController extends Controller
             'tanggal_awal' => 'required|date',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
             'kategori' => 'nullable',
-            'status' => 'nullable|in:belum-lunas,lunas,semua',
+            'status' => 'nullable|in:Belum Lunas,Lunas,semua',
             'tipe_laporan' => 'required|in:web,pdf',
         ]);
 
@@ -163,10 +197,10 @@ class LaporanSimpanPinjamController extends Controller
         $status = $request->status;
 
         $query = Pinjamans::with(['nasabah', 'settingPinjaman'])
-            ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir]);
+            ->whereBetween('tgl_pinjam', [$tanggalAwal, $tanggalAkhir]);
 
         if ($kategori && $kategori !== 'semua') {
-            $query->where('setting_pinjamans_id', $kategori);
+            $query->where('setting_pinjaman_id', $kategori);
         }
 
         if ($status && $status !== 'semua') {
@@ -174,7 +208,9 @@ class LaporanSimpanPinjamController extends Controller
         }
 
         $pinjaman = $query->get();
-        $total = $pinjaman->sum('nominal');
+        $total = $pinjaman->sum(function ($item) {
+            return $item->getOriginalNominalAttribute();
+        });
         $totalBunga = $pinjaman->sum('bunga_nominal');
         $totalPinjaman = $pinjaman->sum('total');
 
@@ -224,17 +260,19 @@ class LaporanSimpanPinjamController extends Controller
         $tanggalAkhir = $request->tanggal_akhir;
         $kategori = $request->kategori;
 
-        $query = PengembalianPinjamans::with(['nasabah', 'pinjaman.settingPinjaman'])
-            ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir]);
+        $query = PengembalianPinjamans::with(['pinjaman.nasabah', 'pinjaman.settingPinjaman'])
+            ->whereBetween('tgl_pengembalian_sementara', [$tanggalAwal, $tanggalAkhir]);
 
         if ($kategori && $kategori !== 'semua') {
             $query->whereHas('pinjaman', function ($q) use ($kategori) {
-                $q->where('setting_pinjamans_id', $kategori);
+                $q->where('setting_pinjaman_id', $kategori);
             });
         }
 
         $pengembalian = $query->get();
-        $total = $pengembalian->sum('nominal');
+        $total = $pengembalian->sum(function ($item) {
+            return $item->getOriginalNominalCicilanAttribute();
+        });
 
         $kategoriList = SettingPinjaman::pluck('nama_kategori', 'id')->toArray();
 
@@ -274,8 +312,10 @@ class LaporanSimpanPinjamController extends Controller
         $tanggalAwal = $request->tanggal_awal;
         $tanggalAkhir = $request->tanggal_akhir;
 
-        $pengeluaran = PengeluaranSimpanPinjam::whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])->get();
-        $total = $pengeluaran->sum('nominal');
+        $pengeluaran = PengeluaranSimpanPinjam::whereBetween('tgl_pengeluaran', [$tanggalAwal, $tanggalAkhir])->get();
+        $total = $pengeluaran->sum(function ($item) {
+            return $item->getOriginalJumlahAttribute();
+        });
 
         if ($request->tipe_laporan === 'web') {
             return view('simpan-pinjam.laporan.pengeluaran', compact(
@@ -308,29 +348,25 @@ class LaporanSimpanPinjamController extends Controller
         $rekapData = [];
 
         foreach ($nasabahs as $nasabah) {
-            $simpananPokok = Simpanan::where('nasabah_id', $nasabah->id)
-                ->where('kategori', 'pokok')
-                ->sum('nominal');
+            // Karena tidak ada kolom kategori dalam tabel simpanan, kita hitung total saja
+            $simpananPokok = 0; // Tidak ada kategori di migration
+            $pengambilanPokok = 0; // Tidak ada kategori di migration
+            $simpananWajib = 0; // Tidak ada kategori di migration
+            $pengambilanWajib = 0; // Tidak ada kategori di migration
 
-            $pengambilanPokok = PengambilanSimpanan::where('nasabah_id', $nasabah->id)
-                ->where('kategori', 'pokok')
-                ->sum('nominal');
-
-            $simpananWajib = Simpanan::where('nasabah_id', $nasabah->id)
-                ->where('kategori', 'wajib')
-                ->sum('nominal');
-
-            $pengambilanWajib = PengambilanSimpanan::where('nasabah_id', $nasabah->id)
-                ->where('kategori', 'wajib')
-                ->sum('nominal');
-
+            // Hitung total simpanan
             $simpananSukarela = Simpanan::where('nasabah_id', $nasabah->id)
-                ->where('kategori', 'sukarela')
-                ->sum('nominal');
+                ->get()
+                ->sum(function ($item) {
+                    return $item->getOriginalNominalAttribute();
+                });
 
+            // Hitung total pengambilan
             $pengambilanSukarela = PengambilanSimpanan::where('nasabah_id', $nasabah->id)
-                ->where('kategori', 'sukarela')
-                ->sum('nominal');
+                ->get()
+                ->sum(function ($item) {
+                    return $item->getOriginalNominalAttribute();
+                });
 
             $totalSimpanan = $simpananPokok + $simpananWajib + $simpananSukarela;
             $totalPengambilan = $pengambilanPokok + $pengambilanWajib + $pengambilanSukarela;
@@ -375,16 +411,25 @@ class LaporanSimpanPinjamController extends Controller
 
         foreach ($nasabahs as $nasabah) {
             $pinjaman = Pinjamans::where('nasabah_id', $nasabah->id)->get();
-            $totalPinjaman = $pinjaman->sum('total');
+            $totalPinjaman = $pinjaman->sum(function ($item) {
+                return $item->getOriginalNominalAttribute();
+            });
 
             $pinjamanBelumLunas = Pinjamans::where('nasabah_id', $nasabah->id)
-                ->where('status', 'belum-lunas')
+                ->where('status', 'Belum Lunas')
                 ->get();
 
-            $totalPinjamanBelumLunas = $pinjamanBelumLunas->sum('total');
+            $totalPinjamanBelumLunas = $pinjamanBelumLunas->sum(function ($item) {
+                return $item->getOriginalNominalAttribute();
+            });
 
-            $totalPengembalian = PengembalianPinjamans::where('nasabah_id', $nasabah->id)
-                ->sum('nominal');
+            // Pengembalian pinjaman dikumpulkan berdasarkan pinjaman nasabah
+            $pinjamanIds = $pinjaman->pluck('id')->toArray();
+            $totalPengembalian = PengembalianPinjamans::whereIn('pinjamans_id', $pinjamanIds)
+                ->get()
+                ->sum(function ($item) {
+                    return $item->getOriginalNominalCicilanAttribute();
+                });
 
             $sisaPinjaman = $totalPinjaman - $totalPengembalian;
 
@@ -408,181 +453,141 @@ class LaporanSimpanPinjamController extends Controller
     }
 
     /**
-     * Update laporan berdasarkan filter
+     * API untuk data simpanan
      */
-    public function updateLaporan(Request $request)
+    public function apiSimpanan(Request $request)
     {
         $request->validate([
             'tanggal_awal' => 'required|date',
             'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
-            'nasabah_id' => 'nullable|exists:nasabahs,id',
         ]);
 
         $tanggalAwal = $request->tanggal_awal;
         $tanggalAkhir = $request->tanggal_akhir;
-        $nasabahId = $request->nasabah_id;
 
-        // Data transaksi simpanan
-        $transaksiSimpanan = $this->getTransaksiSimpanan($tanggalAwal, $tanggalAkhir, $nasabahId);
+        $simpanan = Simpanan::with('nasabah')
+            ->whereBetween('tgl_simpan', [$tanggalAwal, $tanggalAkhir])
+            ->get();
 
-        // Data transaksi pinjaman
-        $transaksiPinjaman = $this->getTransaksiPinjaman($tanggalAwal, $tanggalAkhir, $nasabahId);
-
-        // Data pengeluaran
-        $pengeluaran = $this->getPengeluaran($tanggalAwal, $tanggalAkhir);
+        $total = $simpanan->sum(function ($item) {
+            return $item->getOriginalNominalAttribute();
+        });
 
         return response()->json([
-            'success' => true,
-            'transaksiSimpanan' => $transaksiSimpanan,
-            'transaksiPinjaman' => $transaksiPinjaman,
-            'pengeluaran' => $pengeluaran
+            'status' => 'success',
+            'data' => $simpanan,
+            'total' => $total
         ]);
     }
 
     /**
-     * Ambil data transaksi simpanan
+     * API untuk data pengambilan simpanan
      */
-    private function getTransaksiSimpanan($tanggalAwal, $tanggalAkhir, $nasabahId = null)
+    public function apiPengambilan(Request $request)
     {
-        // Query untuk simpanan
-        $simpananQuery = Simpanan::with('nasabah')
-            ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])
-            ->orderBy('tanggal', 'asc');
+        $request->validate([
+            'tanggal_awal' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
+        ]);
 
-        // Query untuk pengambilan simpanan
-        $pengambilanQuery = PengambilanSimpanan::with('nasabah')
-            ->whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])
-            ->orderBy('tanggal', 'asc');
+        $tanggalAwal = $request->tanggal_awal;
+        $tanggalAkhir = $request->tanggal_akhir;
 
-        // Filter berdasarkan nasabah jika ada
-        if ($nasabahId) {
-            $simpananQuery->where('nasabah_id', $nasabahId);
-            $pengambilanQuery->where('nasabah_id', $nasabahId);
-        }
+        $pengambilan = PengambilanSimpanan::with('nasabah')
+            ->whereBetween('tgl_pengambilan', [$tanggalAwal, $tanggalAkhir])
+            ->get();
 
-        $simpanan = $simpananQuery->get();
-        $pengambilan = $pengambilanQuery->get();
-
-        // Gabungkan data simpanan dan pengambilan
-        $transaksi = [];
-        $saldoBerjalan = 0;
-
-        foreach ($simpanan as $s) {
-            $transaksi[] = [
-                'tanggal' => Carbon::parse($s->tanggal)->format('d/m/Y'),
-                'nasabah_id' => $s->nasabah_id,
-                'nasabah_nama' => $s->nasabah->nama ?? 'N/A',
-                'jenis' => 'Debit', // Simpanan masuk
-                'nominal' => $s->nominal,
-                'saldo_berjalan' => $saldoBerjalan + $s->nominal
-            ];
-            $saldoBerjalan += $s->nominal;
-        }
-
-        foreach ($pengambilan as $p) {
-            $transaksi[] = [
-                'tanggal' => Carbon::parse($p->tanggal)->format('d/m/Y'),
-                'nasabah_id' => $p->nasabah_id,
-                'nasabah_nama' => $p->nasabah->nama ?? 'N/A',
-                'jenis' => 'Kredit', // Pengambilan keluar
-                'nominal' => $p->nominal,
-                'saldo_berjalan' => $saldoBerjalan - $p->nominal
-            ];
-            $saldoBerjalan -= $p->nominal;
-        }
-
-        // Urutkan berdasarkan tanggal
-        usort($transaksi, function ($a, $b) {
-            return strtotime($a['tanggal']) - strtotime($b['tanggal']);
+        $total = $pengambilan->sum(function ($item) {
+            return $item->getOriginalNominalAttribute();
         });
 
-        // Hitung ulang saldo berjalan setelah diurutkan
-        $saldoBerjalan = 0;
-        foreach ($transaksi as &$t) {
-            if ($t['jenis'] == 'Debit') {
-                $saldoBerjalan += $t['nominal'];
-            } else {
-                $saldoBerjalan -= $t['nominal'];
-            }
-            $t['saldo_berjalan'] = $saldoBerjalan;
-        }
-
-        return [
-            'transaksi' => $transaksi,
-            'saldo_akhir' => $saldoBerjalan
-        ];
+        return response()->json([
+            'status' => 'success',
+            'data' => $pengambilan,
+            'total' => $total
+        ]);
     }
 
     /**
-     * Ambil data transaksi pinjaman
+     * API untuk data pinjaman
      */
-    private function getTransaksiPinjaman($tanggalAwal, $tanggalAkhir, $nasabahId = null)
+    public function apiPinjaman(Request $request)
     {
-        // Query untuk pinjaman yang belum lunas
-        $pinjamanQuery = Pinjamans::with('nasabah')
-            ->where('status', 'belum-lunas')
-            ->orderBy('tanggal', 'asc');
+        $request->validate([
+            'tanggal_awal' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
+        ]);
 
-        // Filter berdasarkan nasabah jika ada
-        if ($nasabahId) {
-            $pinjamanQuery->where('nasabah_id', $nasabahId);
-        }
+        $tanggalAwal = $request->tanggal_awal;
+        $tanggalAkhir = $request->tanggal_akhir;
 
-        $pinjaman = $pinjamanQuery->get();
-        $transaksi = [];
-        $totalPinjaman = 0;
+        $pinjaman = Pinjamans::with('nasabah')
+            ->whereBetween('tgl_pinjam', [$tanggalAwal, $tanggalAkhir])
+            ->get();
 
-        foreach ($pinjaman as $p) {
-            // Hitung total pengembalian untuk pinjaman ini
-            $totalPengembalian = PengembalianPinjamans::where('pinjaman_id', $p->id)->sum('nominal');
-            $sisaPinjaman = $p->total - $totalPengembalian;
+        $total = $pinjaman->sum(function ($item) {
+            return $item->getOriginalNominalAttribute();
+        });
 
-            $transaksi[] = [
-                'id' => $p->id,
-                'tanggal' => Carbon::parse($p->tanggal)->format('d/m/Y'),
-                'nasabah_id' => $p->nasabah_id,
-                'nasabah_nama' => $p->nasabah->nama ?? 'N/A',
-                'total_pinjaman' => $p->total,
-                'total_pengembalian' => $totalPengembalian,
-                'nominal' => $sisaPinjaman
-            ];
-
-            $totalPinjaman += $sisaPinjaman;
-        }
-
-        return [
-            'pinjaman' => $transaksi,
-            'total_pinjaman' => $totalPinjaman
-        ];
+        return response()->json([
+            'status' => 'success',
+            'data' => $pinjaman,
+            'total' => $total
+        ]);
     }
 
     /**
-     * Ambil data pengeluaran
+     * API untuk data pengembalian pinjaman
      */
-    private function getPengeluaran($tanggalAwal, $tanggalAkhir)
+    public function apiPengembalian(Request $request)
     {
-        $pengeluaranQuery = PengeluaranSimpanPinjam::whereBetween('tanggal', [$tanggalAwal, $tanggalAkhir])
-            ->orderBy('tanggal', 'asc');
+        $request->validate([
+            'tanggal_awal' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
+        ]);
 
-        $pengeluaran = $pengeluaranQuery->get();
-        $data = [];
-        $totalPengeluaran = 0;
+        $tanggalAwal = $request->tanggal_awal;
+        $tanggalAkhir = $request->tanggal_akhir;
 
-        foreach ($pengeluaran as $p) {
-            $data[] = [
-                'id' => $p->id,
-                'tanggal' => Carbon::parse($p->tanggal)->format('d/m/Y'),
-                'kode' => $p->kode,
-                'tujuan' => $p->tujuan,
-                'nominal' => $p->nominal
-            ];
+        $pengembalian = PengembalianPinjamans::with(['pinjaman.nasabah'])
+            ->whereBetween('tgl_pengembalian_sementara', [$tanggalAwal, $tanggalAkhir])
+            ->get();
 
-            $totalPengeluaran += $p->nominal;
-        }
+        $total = $pengembalian->sum(function ($item) {
+            return $item->getOriginalNominalCicilanAttribute();
+        });
 
-        return [
-            'pengeluaran' => $data,
-            'total_pengeluaran' => $totalPengeluaran
-        ];
+        return response()->json([
+            'status' => 'success',
+            'data' => $pengembalian,
+            'total' => $total
+        ]);
+    }
+
+    /**
+     * API untuk data pengeluaran
+     */
+    public function apiPengeluaran(Request $request)
+    {
+        $request->validate([
+            'tanggal_awal' => 'required|date',
+            'tanggal_akhir' => 'required|date|after_or_equal:tanggal_awal',
+        ]);
+
+        $tanggalAwal = $request->tanggal_awal;
+        $tanggalAkhir = $request->tanggal_akhir;
+
+        $pengeluaran = PengeluaranSimpanPinjam::whereBetween('tgl_pengeluaran', [$tanggalAwal, $tanggalAkhir])
+            ->get();
+
+        $total = $pengeluaran->sum(function ($item) {
+            return $item->getOriginalJumlahAttribute();
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $pengeluaran,
+            'total' => $total
+        ]);
     }
 }

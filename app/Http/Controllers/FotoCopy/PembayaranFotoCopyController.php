@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\FotoCopy;
 
 use App\Http\Controllers\Controller;
+use App\Models\Income;
 use App\Models\PembayaranFotoCopy;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PembayaranFotoCopyController extends Controller
 {
@@ -29,10 +31,17 @@ class PembayaranFotoCopyController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             PembayaranFotoCopy::create($request->all());
-
+            Income::create([
+                'badan_usaha_id' => auth()->user()->badan_usaha->id,
+                'nominal' => $request->total_pembayaran,
+                'tanggal' => $request->tgl_pembayaran,
+            ]);
+            DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'Pembayaran gagal ditambahkan: ' . $th->getMessage());
         }
     }
@@ -49,10 +58,18 @@ class PembayaranFotoCopyController extends Controller
         ]);
 
         try {
+            DB::beginTransaction();
             $pembayaran->update($request->all());
-
+            Income::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+                ->where('tanggal', $pembayaran->tgl_pembayaran)
+                ->update([
+                    'nominal' => $request->total_pembayaran,
+                    'tanggal' => $request->tgl_pembayaran,
+                ]);
+            DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil diubah');
         } catch (\Throwable $th) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'Pembayaran gagal diubah: ' . $th->getMessage());
         }
     }

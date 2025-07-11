@@ -30,7 +30,7 @@ class Income extends Model
         return 'Rp. ' . number_format($value, 0, ',', '.');
     }
 
-    public function getOriginalNominalAttribute($value)
+    public function getOriginalNominalAttribute()
     {
         return $this->attributes['nominal'];
     }

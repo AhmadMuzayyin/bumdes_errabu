@@ -65,7 +65,6 @@ class LaporanController extends Controller
             return (float) str_replace(['Rp. ', '.'], '', $item->getOriginalNominalAttribute());
         });
 
-        $totalDanaMasuk += $summaryDanaMasuk['umum'];
         $totalDanaKeluar += $summaryDanaKeluar['umum'];
 
         // 2. Foto Copy data
@@ -81,7 +80,7 @@ class LaporanController extends Controller
         $danaKeluar['fotocopy'] = $fotocopyPengeluaran;
 
         $summaryDanaMasuk['fotocopy'] = $fotocopyPembayaran->sum('total_pembayaran');
-        $summaryDanaKeluar['fotocopy'] = $fotocopyPengeluaran->sum('jumlah');
+        $summaryDanaKeluar['fotocopy'] = $fotocopyPengeluaran->sum('harga');
 
         $totalDanaMasuk += $summaryDanaMasuk['fotocopy'];
         $totalDanaKeluar += $summaryDanaKeluar['fotocopy'];
@@ -97,14 +96,15 @@ class LaporanController extends Controller
             'bayar_pln' => $brilinkBayarPln
         ];
 
-        // BRI Link income is from admin fees
-        $summaryDanaMasuk['brilink'] = $brilinkSetorTunai->sum(function ($item) {
-            return (float) ($item->admin_fee ?? 0);
-        }) + $brilinkTarikTunai->sum(function ($item) {
-            return (float) ($item->admin_fee ?? 0);
-        }) + $brilinkBayarPln->sum(function ($item) {
-            return (float) ($item->admin_fee ?? 0);
-        });
+        $danaMasuk['brilink'] = [
+            'setor_tunai' => $brilinkSetorTunai,
+            'tarik_tunai' => $brilinkTarikTunai,
+            'bayar_pln' => $brilinkBayarPln
+        ];
+
+        $summaryDanaMasuk['brilink'] = $brilinkSetorTunai->sum('nominal') +
+            $brilinkTarikTunai->sum('nominal') +
+            $brilinkBayarPln->sum('nominal');
 
         $totalDanaMasuk += $summaryDanaMasuk['brilink'];
 

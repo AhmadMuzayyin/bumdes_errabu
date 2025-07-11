@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Pengeluaran</title>
+    <title>Laporan Pengembalian Pinjaman</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -60,7 +60,7 @@
 </head>
 <body>
     <div class="header">
-        <div class="title">LAPORAN PENGELUARAN SIMPAN PINJAM</div>
+        <div class="title">LAPORAN PENGEMBALIAN PINJAMAN</div>
         <div class="subtitle">BUMDes Errabu</div>
     </div>
     
@@ -81,21 +81,21 @@
         <thead>
             <tr>
                 <th width="5%">No</th>
-                <th width="15%">Kode</th>
+                <th width="25%">Nasabah</th>
                 <th width="15%">Tanggal</th>
-                <th width="25%">Jumlah</th>
-                <th width="40%">Tujuan</th>
+                <th width="30%">Nominal Cicilan</th>
+                <th width="25%">Status</th>
             </tr>
         </thead>
         <tbody>
-            @if(count($pengeluaran) > 0)
-                @foreach($pengeluaran as $index => $p)
+            @if(count($pengembalian) > 0)
+                @foreach($pengembalian as $index => $p)
                 <tr>
                     <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ $p->kode }}</td>
-                    <td>{{ date('d/m/Y', strtotime($p->attributes['tgl_pengeluaran'])) }}</td>
-                    <td class="text-right">{{ $p->jumlah }}</td>
-                    <td>{{ $p->tujuan ?? '-' }}</td>
+                    <td>{{ $p->pinjaman->nasabah->nama }}</td>
+                    <td>{{ date('d/m/Y', strtotime($p->attributes['tgl_pengembalian_sementara'])) }}</td>
+                    <td class="text-right">{{ $p->nominal_cicilan }}</td>
+                    <td>{{ $p->status }}</td>
                 </tr>
                 @endforeach
             @else
