@@ -253,7 +253,6 @@ class LaporanController extends Controller
             return (float) str_replace(['Rp. ', '.'], '', $item->getOriginalNominalAttribute());
         });
 
-        $totalDanaMasuk += $summaryDanaMasuk['umum'];
         $totalDanaKeluar += $summaryDanaKeluar['umum'];
 
         // 2. Foto Copy data

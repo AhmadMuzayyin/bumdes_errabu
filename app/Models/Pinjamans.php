@@ -24,7 +24,7 @@ class Pinjamans extends Model
     }
 
     // Relasi dengan Pengembalian Pinjaman
-    public function pengembalian()
+    public function pengembalianPinjaman()
     {
         return $this->hasMany(PengembalianPinjamans::class, 'pinjamans_id');
     }
