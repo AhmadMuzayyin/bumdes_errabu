@@ -106,7 +106,6 @@ class PinjamanController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $pinjaman = Pinjamans::findOrFail($id);
         $validator = Validator::make($request->all(), [
             'nasabah_id' => 'required|exists:nasabahs,id',
             'nominal' => 'required|numeric',
@@ -118,10 +117,6 @@ class PinjamanController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-        if ($pinjaman->pengembalianPinjaman()->count() > 0) {
-            return redirect()->back()
-                ->with('error', 'Pinjaman sudah memiliki catatan pengembalian, tidak dapat diubah.');
-        }
         DB::beginTransaction();
         try {
             // Hitung bunga pinjaman (persentase dari nominal pokok)
@@ -132,6 +127,11 @@ class PinjamanController extends Controller
             $totalPinjaman = $nominalPokok + $nominalBunga;
 
             // Update data pinjaman
+            $pinjaman = Pinjamans::findOrFail($id);
+            if ($pinjaman->pengembalianPinjaman()->count() > 0) {
+                return redirect()->back()
+                    ->with('error', 'Pinjaman sudah memiliki catatan pengembalian, tidak dapat diubah.');
+            }
             $pinjaman->nasabah_id = $request->nasabah_id;
             $pinjaman->nominal = $request->nominal;
             $pinjaman->tgl_pinjam = $request->tgl_pinjam;

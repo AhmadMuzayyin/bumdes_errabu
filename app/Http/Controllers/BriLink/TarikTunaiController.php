@@ -17,18 +17,6 @@ class TarikTunaiController extends Controller
         $tarik_tunai = BriLinkTarikTunai::latest()->get();
         return view('brilink.tarik_tunai.index', compact('tarik_tunai'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('brilink.tarik_tunai.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -45,26 +33,6 @@ class TarikTunaiController extends Controller
         return redirect()->route('brilink.tarik-tunai.index')
             ->with('success', 'Data tarik tunai berhasil ditambahkan');
     }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(BriLinkTarikTunai $tarik_tunai)
-    {
-        return view('brilink.tarik_tunai.show', compact('tarik_tunai'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(BriLinkTarikTunai $tarik_tunai)
-    {
-        return view('brilink.tarik_tunai.edit', compact('tarik_tunai'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, BriLinkTarikTunai $tarik_tunai)
     {
         $request->validate([
@@ -80,10 +48,6 @@ class TarikTunaiController extends Controller
         return redirect()->route('brilink.tarik-tunai.index')
             ->with('success', 'Data tarik tunai berhasil diperbarui');
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(BriLinkTarikTunai $tarik_tunai)
     {
         $tarik_tunai->delete();

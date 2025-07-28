@@ -35,7 +35,7 @@
                             @foreach ($spending as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->tujuan }}</td>
+                                    <td>{{ $item->badan_usaha->nama }}</td>
                                     <td>{{ $item->nominal }}</td>
                                     <td>{{ $item->tanggal }}</td>
                                     <td>{{ $item->created_at }}</td>
@@ -47,11 +47,17 @@
                                             action="{{ route('spending.update', $item->id) }}">
 
                                             <div class="form-group">
-                                                <label for="tujuan">Tujuan</label>
-                                                <input type="text" name="tujuan" id="tujuan"
-                                                    class="form-control @error('tujuan') is-invalid @enderror"
-                                                    placeholder="Tujuan" value="{{ old('tujuan') ?? $item->tujuan }}">
-                                                @error('tujuan')
+                                                <label for="badan_usaha_id">Tujuan</label>
+                                                <select name="badan_usaha_id" id="badan_usaha_id"
+                                                    class="form-control @error('badan_usaha_id') is-invalid @enderror">
+                                                    <option value="">-- Pilih Badan Usaha --</option>
+                                                    @foreach ($bumdes as $val)
+                                                        <option value="{{ $val->id }}"
+                                                            {{ $item->badan_usaha_id == $val->id ? 'selected' : '' }}>
+                                                            {{ $val->nama }}</option>
+                                                    @endforeach
+                                                </select>
+                                                @error('badan_usaha_id')
                                                     <div class="invalid-feedback">
                                                         {{ $message }}
                                                     </div>
@@ -70,10 +76,21 @@
                                                 @enderror
                                             </div>
                                             <div class="form-group">
+                                                <label for="keterangan">Keterangan</label>
+                                                <textarea name="keterangan" id="keterangan" rows="5"
+                                                    class="form-control @error('keterangan') is-invalid @enderror" placeholder="Keterangan">{{ old('keterangan') ?? $item->keterangan }}</textarea>
+                                                @error('keterangan')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group">
                                                 <label for="tanggal">Tanggal</label>
                                                 <input type="date" name="tanggal" id="tanggal"
                                                     class="form-control @error('tanggal') is-invalid @enderror"
-                                                    placeholder="tanggal" value="{{ old('tanggal') ?? $item->originalTanggal }}">
+                                                    placeholder="tanggal"
+                                                    value="{{ old('tanggal') ?? $item->originalTanggal }}">
                                                 @error('tanggal')
                                                     <div class="invalid-feedback">
                                                         {{ $message }}
@@ -92,10 +109,15 @@
     </div>
     <x-modal-form id="addSpending" title="Tambah Dana Keluar" action="{{ route('spending.store') }}">
         <div class="form-group">
-            <label for="tujuan">Tujuan</label>
-            <input type="text" name="tujuan" id="tujuan" class="form-control @error('tujuan') is-invalid @enderror"
-                placeholder="Tujuan" value="{{ old('tujuan') }}">
-            @error('tujuan')
+            <label for="badan_usaha_id">Badan Usaha Tujuan</label>
+            <select name="badan_usaha_id" id="badan_usaha_id"
+                class="form-control @error('badan_usaha_id') is-invalid @enderror">
+                <option value="">-- Pilih Badan Usaha --</option>
+                @foreach ($bumdes as $val)
+                    <option value="{{ $val->id }}">{{ $val->nama }}</option>
+                @endforeach
+            </select>
+            @error('badan_usaha_id')
                 <div class="invalid-feedback">
                     {{ $message }}
                 </div>
@@ -106,6 +128,16 @@
             <input type="number" name="nominal" id="nominal" class="form-control @error('nominal') is-invalid @enderror"
                 placeholder="Nominal" value="{{ old('nominal') }}">
             @error('nominal')
+                <div class="invalid-feedback">
+                    {{ $message }}
+                </div>
+            @enderror
+        </div>
+        <div class="form-group">
+            <label for="keterangan">Keterangan</label>
+            <textarea name="keterangan" id="keterangan" rows="5"
+                class="form-control @error('keterangan') is-invalid @enderror" placeholder="Keterangan">{{ old('keterangan') }}</textarea>
+            @error('keterangan')
                 <div class="invalid-feedback">
                     {{ $message }}
                 </div>

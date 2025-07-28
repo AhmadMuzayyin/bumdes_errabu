@@ -11,11 +11,6 @@ class Income extends Model
 
     protected $guarded = ['id'];
 
-    public function badan_usaha()
-    {
-        return $this->belongsTo(BadanUsaha::class);
-    }
-
     public function getTanggalAttribute($value)
     {
         return date('d F Y', strtotime($value));

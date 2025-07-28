@@ -112,14 +112,12 @@ class PengembalianPinjamanController extends Controller
     public function update(Request $request, string $id)
     {
         $pengembalian = PengembalianPinjaman::findOrFail($id);
-
         $validator = Validator::make($request->all(), [
             'pinjamans_id' => 'required|exists:pinjamans,id',
             'nominal_cicilan' => 'required|numeric|min:0',
             'tgl_pengembalian_sementara' => 'required|date',
             'status' => 'required|in:Lunas,Belum Lunas',
         ]);
-
         if ($validator->fails()) {
             return redirect()->back()
                 ->withErrors($validator)
@@ -128,11 +126,8 @@ class PengembalianPinjamanController extends Controller
 
         DB::beginTransaction();
         try {
-            // Simpan nominal cicilan lama untuk perhitungan
             $oldNominalCicilan = $pengembalian->getOriginalNominalCicilanAttribute();
             $newNominalCicilan = $request->nominal_cicilan;
-
-            // Update data pengembalian pinjaman
             $pengembalian->update([
                 'pinjamans_id' => $request->pinjamans_id,
                 'nominal_cicilan' => $newNominalCicilan,
@@ -141,38 +136,20 @@ class PengembalianPinjamanController extends Controller
             ]);
 
             $pinjaman = Pinjamans::findOrFail($request->pinjamans_id);
-
-            // Hitung total pengembalian dengan menggunakan query database langsung
-            // untuk menghindari masalah format data
             $totalPengembalian = DB::table('pengembalian_pinjamans')
                 ->where('pinjamans_id', $request->pinjamans_id)
                 ->sum('nominal_cicilan');
-
-            // Dapatkan nominal pokok pinjaman
             $nominalPokok = $pinjaman->getOriginalNominalAttribute();
-
-            // Update status pinjaman dan nominal pengembalian
             if ($totalPengembalian >= $nominalPokok) {
                 $pinjaman->update([
                     'status' => 'Lunas',
                     'nominal_pengembalian' => $totalPengembalian
                 ]);
-
-                // Update status semua cicilan menjadi lunas jika pinjaman sudah lunas
-                // dan status yang dipilih adalah 'Lunas'
                 if ($request->status === 'Lunas') {
                     PengembalianPinjaman::where('pinjamans_id', $request->pinjamans_id)
                         ->update(['status' => 'Lunas']);
                 }
-            } else {
-                // Jika total pengembalian kurang dari nominal pokok,
-                // status pinjaman adalah 'Belum Lunas'
-                $pinjaman->update([
-                    'status' => 'Belum Lunas',
-                    'nominal_pengembalian' => $totalPengembalian
-                ]);
             }
-
             DB::commit();
             return redirect()->route('pengembalian-pinjaman.index')
                 ->with('success', 'Data pengembalian pinjaman berhasil diperbarui');
@@ -183,10 +160,6 @@ class PengembalianPinjamanController extends Controller
                 ->withInput();
         }
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $pengembalian = PengembalianPinjaman::findOrFail($id);
@@ -194,41 +167,17 @@ class PengembalianPinjamanController extends Controller
 
         DB::beginTransaction();
         try {
-            // Simpan informasi cicilan sebelum dihapus
-            $deletedCicilan = $pengembalian->getOriginalNominalCicilanAttribute();
-            $statusSebelumnya = $pengembalian->status;
-
-            // Hapus data cicilan
             $pengembalian->delete();
-
-            // Ambil data pinjaman terkait
             $pinjaman = Pinjamans::findOrFail($pinjamans_id);
-            $nominalPokok = $pinjaman->getOriginalNominalAttribute();
-
-            // Hitung ulang total pengembalian dari database langsung untuk menghindari masalah format
-            $totalPengembalian = DB::table('pengembalian_pinjamans')
-                ->where('pinjamans_id', $pinjamans_id)
-                ->sum('nominal_cicilan');
-
-            // Catat perubahan status sebelum & sesudah
-            $statusPinjamanSebelumnya = $pinjaman->status;
-            $statusPinjamanBaru = ($totalPengembalian >= $nominalPokok) ? 'Lunas' : 'Belum Lunas';
-
-            // Jika status berubah dari Lunas ke Belum Lunas
-            if ($statusPinjamanSebelumnya === 'Lunas' && $statusPinjamanBaru === 'Belum Lunas') {
-                // Update semua cicilan terkait menjadi Belum Lunas
-                PengembalianPinjaman::where('pinjamans_id', $pinjamans_id)
-                    ->update(['status' => 'Belum Lunas']);
-
-                // Log perubahan status
+            if ($pinjaman->status === 'Lunas') {
+                $pinjaman->update([
+                    'status' => 'Belum Lunas'
+                ]);
+                PengembalianPinjaman::where('pinjamans_id', $pinjamans_id)->update([
+                    'status' => 'Belum Lunas'
+                ]);
                 Log::info("Pinjaman ID: $pinjamans_id - Status diubah dari Lunas ke Belum Lunas setelah penghapusan cicilan ID: $id");
             }
-
-            // Update status pinjaman berdasarkan total pengembalian vs nominal pokok
-            $pinjaman->update([
-                'status' => $statusPinjamanBaru,
-                'nominal_pengembalian' => $totalPengembalian
-            ]);
 
             DB::commit();
             return redirect()->route('pengembalian-pinjaman.index')

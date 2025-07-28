@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\BriLinkSetorTunai;
 use App\Models\BriLinkTarikTunai;
 use App\Models\BriLinkBayarTagihanPln;
+use App\Models\PengeluaranBriLink;
+use App\Models\Spending;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -29,6 +31,14 @@ class LaporanController extends Controller
         $total_tarik = $tarik_tunai->sum('nominal');
         $total_bayar_pln = $bayar_tagihan->sum('nominal');
 
+        $pengeluaran = PengeluaranBriLink::whereBetween('tgl_pengeluaran', [$start, $end])
+            ->orderBy('tgl_pengeluaran')
+            ->get();
+        $pemasukan = Spending::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+            ->whereBetween('tanggal', [$start, $end])
+            ->orderBy('tanggal')
+            ->get();
+
         $laporan = [
             'setor_tunai' => $setor_tunai,
             'tarik_tunai' => $tarik_tunai,
@@ -38,6 +48,8 @@ class LaporanController extends Controller
             'total_bayar_pln' => $total_bayar_pln,
             'start_date' => $start_date,
             'end_date' => $end_date,
+            'pengeluaran' => $pengeluaran,
+            'pemasukan' => $pemasukan,
         ];
 
         return view('brilink.laporan.index', $laporan);
@@ -72,7 +84,13 @@ class LaporanController extends Controller
         $total_setor = $setor_tunai->sum('nominal');
         $total_tarik = $tarik_tunai->sum('nominal');
         $total_bayar_pln = $bayar_tagihan->sum('nominal');
-
+        $pengeluaran = PengeluaranBriLink::whereBetween('tgl_pengeluaran', [$start, $end])
+            ->orderBy('tgl_pengeluaran')
+            ->get();
+        $pemasukan = Spending::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+            ->whereBetween('tanggal', [$start, $end])
+            ->orderBy('tanggal')
+            ->get();
         $data = [
             'setor_tunai' => $setor_tunai,
             'tarik_tunai' => $tarik_tunai,
@@ -83,6 +101,8 @@ class LaporanController extends Controller
             'periode' => $periode,
             'periodeFile' => $periodeFile,
             'tanggal_cetak' => Carbon::now()->format('d/m/Y H:i:s'),
+            'pengeluaran' => $pengeluaran,
+            'pemasukan' => $pemasukan,
             'type' => $type
         ];
 
@@ -101,6 +121,14 @@ class LaporanController extends Controller
             case 'bayar-tagihan':
                 $title = "Laporan Bayar Tagihan PLN BRI Link";
                 $view = 'brilink.laporan.pdf.bayar_tagihan_pdf';
+                break;
+            case 'pengeluaran':
+                $title = "Laporan Pengeluaran BRI Link";
+                $view = 'brilink.laporan.pdf.pengeluaran_pdf';
+                break;
+            case 'pemasukan':
+                $title = "Laporan Pemasukan BRI Link";
+                $view = 'brilink.laporan.pdf.pemasukan_pdf';
                 break;
             default:
                 $title = "Laporan BRI Link";

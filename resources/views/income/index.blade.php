@@ -21,7 +21,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Nama Badan Usaha</th>
+                                <th>Sumber Dana</th>
                                 <th>Jumlah Dana</th>
                                 <th>Tanggal</th>
                                 <th>created_at</th>
@@ -35,7 +35,7 @@
                             @foreach ($income as $item)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ $item->badan_usaha->nama }}</td>
+                                    <td>{{ $item->sumber_dana }}</td>
                                     <td>{{ $item->nominal }}</td>
                                     <td>{{ $item->tanggal }}</td>
                                     <td>{{ $item->created_at }}</td>
@@ -45,29 +45,36 @@
                                             delete="{{ route('income.destroy', $item->id) }}" />
                                         <x-modal-form id="edit-{{ $item->id }}" title="Edit Dana Masuk"
                                             action="{{ route('income.update', $item->id) }}">
-                                            @if (Auth::user()->role == 'admin')
-                                                <div class="form-group">
-                                                    <label for="badan_usaha_id">Badan Usaha</label>
-                                                    <select name="badan_usaha_id" id="badan_usaha_id"
-                                                        class="form-control @error('badan_usaha_id') is-invalid @enderror"
-                                                        value="{{ old('badan_usaha_id') }}">
-                                                        <option value="">-- Pilih Badan Usaha --</option>
-                                                        @foreach ($usaha as $val)
-                                                            <option value="{{ $val->id }}"
-                                                                {{ $val->id == $item->badan_usaha_id ? 'selected' : '' }}>
-                                                                {{ $val->nama }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('badan_usaha_id')
-                                                        <div class="invalid-feedback">
-                                                            {{ $message }}
-                                                        </div>
-                                                    @enderror
-                                                </div>
-                                            @else
-                                                <input type="hidden" name="badan_usaha_id" value="{{ $usaha->id }}">
-                                            @endif
+                                            <div class="form-group">
+                                                <label for="sumber_dana">Sumber Dana</label>
+                                                <select name="sumber_dana" id="sumber_dana"
+                                                    class="form-control @error('sumber_dana') is-invalid @enderror">
+                                                    <option value="" disabled>Pilih Sumber Dana</option>
+                                                    <option value="APB DESA"
+                                                        {{ (old('sumber_dana') ?? $item->sumber_dana) == 'APB DESA' ? 'selected' : '' }}>
+                                                        APB DESA</option>
+                                                    <option value="BANK"
+                                                        {{ (old('sumber_dana') ?? $item->sumber_dana) == 'BANK' ? 'selected' : '' }}>
+                                                        BANK</option>
+                                                    <option value="PEMERINTAH PROVINSI"
+                                                        {{ (old('sumber_dana') ?? $item->sumber_dana) == 'PEMERINTAH PROVINSI' ? 'selected' : '' }}>
+                                                        PEMERINTAH PROVINSI</option>
+                                                    <option value="PEMERINTAH KOTA"
+                                                        {{ (old('sumber_dana') ?? $item->sumber_dana) == 'PEMERINTAH KOTA' ? 'selected' : '' }}>
+                                                        PEMERINTAH KOTA</option>
+                                                    <option value="PIHAK KETIGA"
+                                                        {{ (old('sumber_dana') ?? $item->sumber_dana) == 'PIHAK KETIGA' ? 'selected' : '' }}>
+                                                        PIHAK KETIGA</option>
+                                                    <option value="LAIN-LAIN"
+                                                        {{ (old('sumber_dana') ?? $item->sumber_dana) == 'LAIN-LAIN' ? 'selected' : '' }}>
+                                                        LAIN-LAIN</option>
+                                                </select>
+                                                @error('sumber_dana')
+                                                    <div class="invalid-feedback">
+                                                        {{ $message }}
+                                                    </div>
+                                                @enderror
+                                            </div>
                                             <div class="form-group">
                                                 <label for="nominal">Nominal</label>
                                                 <input type="number" name="nominal" id="nominal"
@@ -97,12 +104,8 @@
                                             <div class="table-responsive">
                                                 <table class="table">
                                                     <tr>
-                                                        <th>Nama Badan Usaha</th>
-                                                        <td>{{ $item->badan_usaha->nama }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Operator</th>
-                                                        <td>{{ $item->badan_usaha->user->nama }}</td>
+                                                        <th>Sumber Dana</th>
+                                                        <td>{{ $item->sumber_dana }}</td>
                                                     </tr>
                                                     <tr>
                                                         <th>Nominal</th>
@@ -135,15 +138,20 @@
     <x-modal-form id="addUsaha" title="Tambah Dana Masuk" action="{{ route('income.store') }}">
         @if (Auth::user()->role == 'admin')
             <div class="form-group">
-                <label for="badan_usaha_id">Badan Usaha</label>
-                <select name="badan_usaha_id" id="badan_usaha_id"
-                    class="form-control @error('badan_usaha_id') is-invalid @enderror" value="{{ old('badan_usaha_id') }}">
-                    <option value="">-- Pilih Badan Usaha --</option>
-                    @foreach ($usaha as $val)
-                        <option value="{{ $val->id }}">{{ $val->nama }}</option>
-                    @endforeach
+                <label for="sumber_dana">Sumber Dana</label>
+                <select name="sumber_dana" id="sumber_dana" class="form-control @error('sumber_dana') is-invalid @enderror">
+                    <option value="" disabled selected>Pilih Sumber Dana</option>
+                    <option value="APB DESA" {{ old('sumber_dana') == 'APB DESA' ? 'selected' : '' }}>APB DESA</option>
+                    <option value="BANK" {{ old('sumber_dana') == 'BANK' ? 'selected' : '' }}>BANK</option>
+                    <option value="PEMERINTAH PROVINSI"
+                        {{ old('sumber_dana') == 'PEMERINTAH PROVINSI' ? 'selected' : '' }}>PEMERINTAH PROVINSI</option>
+                    <option value="PEMERINTAH KOTA" {{ old('sumber_dana') == 'PEMERINTAH KOTA' ? 'selected' : '' }}>
+                        PEMERINTAH KOTA</option>
+                    <option value="PIHAK KETIGA" {{ old('sumber_dana') == 'PIHAK KETIGA' ? 'selected' : '' }}>PIHAK KETIGA
+                    </option>
+                    <option value="LAIN-LAIN" {{ old('sumber_dana') == 'LAIN-LAIN' ? 'selected' : '' }}>LAIN-LAIN</option>
                 </select>
-                @error('badan_usaha_id')
+                @error('sumber_dana')
                     <div class="invalid-feedback">
                         {{ $message }}
                     </div>

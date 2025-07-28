@@ -1,58 +1,63 @@
-@extends('layouts.app')
+@extends('layouts.app', ['title' => 'Pengeluaran Simpan Pinjam'])
 @section('content')
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">Daftar Pengeluaran</h3>
-                    <div class="card-tools">
-                        <a href="{{ route('pengeluaran.create') }}" class="btn btn-primary btn-sm">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title">Daftar Pengeluaran Simpan Pinjam</h3>
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#modalTambahPengeluaran">
                             <i class="fas fa-plus"></i> Tambah Pengeluaran
-                        </a>
+                        </button>
                     </div>
                 </div>
                 <div class="card-body">
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-                    
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped" id="pengeluaranTable">
+                        <table class="table table-bordered table-hover" id="tabelPengeluaran">
                             <thead>
                                 <tr>
                                     <th width="5%">No</th>
+                                    <th>Jumlah</th>
+                                    <th>Harga</th>
                                     <th>Tanggal</th>
-                                    <th>Nama Pengeluaran</th>
-                                    <th>Nominal</th>
-                                    <th>Tanggal</th>
+                                    <th>Tujuan</th>
                                     <th width="15%">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($pengeluaran as $key => $item)
+                                @forelse ($pengeluaran as $item)
                                     <tr>
-                                        <td>{{ $key + 1 }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}</td>
-                                        <td>{{ $item->tujuan }}</td>
+                                        <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->jumlah }}</td>
-                                        <td>{{ $item->tgl_pengeluaran }}</td>
+                                        <td>Rp. {{ number_format($item->harga, 0, ',', '.') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->tgl_pengeluaran)->format('d F Y') }}</td>
+                                        <td>{{ $item->tujuan }}</td>
                                         <td>
-                                            <a href="{{ route('pengeluaran.show', $item->id) }}" class="btn btn-info btn-sm">
+                                            <button type="button" class="btn btn-sm btn-info" data-toggle="modal"
+                                                data-target="#modalDetailPengeluaran{{ $item->id }}">
                                                 <i class="fas fa-eye"></i>
-                                            </a>
-                                            <a href="{{ route('pengeluaran.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                            </button>
+                                            <button type="button" class="btn btn-sm btn-warning" data-toggle="modal"
+                                                data-target="#modalEditPengeluaran{{ $item->id }}">
                                                 <i class="fas fa-edit"></i>
-                                            </a>
-                                            <form action="{{ route('pengeluaran.destroy', $item->id) }}" method="POST" class="d-inline">
+                                            </button>
+                                            <form action="{{ route('pengeluaran.destroy', $item->id) }}" method="POST"
+                                                class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data pengeluaran ini?')">
+                                                <button type="submit" class="btn btn-sm btn-danger"
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data ini?')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center">Tidak ada data</td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -60,18 +65,222 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal Containers for all items -->
+    @foreach ($pengeluaran as $item)
+        <!-- Modal Detail Pengeluaran -->
+        <div class="modal fade" id="modalDetailPengeluaran{{ $item->id }}" tabindex="-1" role="dialog"
+            aria-labelledby="modalDetailPengeluaranLabel{{ $item->id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalDetailPengeluaranLabel{{ $item->id }}">
+                            Detail Pengeluaran</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Kode</th>
+                                    <td>{{ $item->kode }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Jenis Pengeluaran</th>
+                                    <td>{{ $item->jenis_pengeluaran }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Jumlah</th>
+                                    <td>{{ $item->jumlah }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Harga</th>
+                                    <td>Rp. {{ number_format($item->harga, 0, ',', '.') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Total</th>
+                                    <td>Rp. {{ number_format($item->jumlah * $item->harga, 0, ',', '.') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Tanggal</th>
+                                    <td>{{ \Carbon\Carbon::parse($item->tgl_pengeluaran)->format('d F Y') }}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Tujuan</th>
+                                    <td>{{ $item->tujuan }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Dibuat pada</th>
+                                    <td>{{ $item->created_at->format('d F Y H:i') }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Diupdate pada</th>
+                                    <td>{{ $item->updated_at->format('d F Y H:i') }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Edit Pengeluaran -->
+        <div class="modal fade" id="modalEditPengeluaran{{ $item->id }}" tabindex="-1" role="dialog"
+            aria-labelledby="modalEditPengeluaranLabel{{ $item->id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalEditPengeluaranLabel{{ $item->id }}">
+                            Edit Pengeluaran</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('pengeluaran.update', $item->id) }}" method="POST">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="kode">Kode</label>
+                                <input type="text" class="form-control" id="kode" name="kode"
+                                    value="{{ $item->kode }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="jenis_pengeluaran">Jenis Pengeluaran</label>
+                                <select class="form-control @error('jenis_pengeluaran') is-invalid @enderror"
+                                    aria-describedby="jenisPengeluaranHelp" id="jenis_pengeluaran" name="jenis_pengeluaran"
+                                    required>
+                                    <option value="" disabled>Pilih Jenis Pengeluaran</option>
+                                    <option value="Belanja Rutin"
+                                        {{ $item->jenis_pengeluaran == 'Belanja Rutin' ? 'selected' : '' }}>Belanja Rutin
+                                    </option>
+                                    <option value="Gaji Karyawan"
+                                        {{ $item->jenis_pengeluaran == 'Gaji Karyawan' ? 'selected' : '' }}>Gaji Karyawan
+                                    </option>
+                                    <option value="Setor Pengahsilan"
+                                        {{ $item->jenis_pengeluaran == 'Setor Pengahsilan' ? 'selected' : '' }}>Setor
+                                        Pengahsilan</option>
+                                    <option value="Lainnya" {{ $item->jenis_pengeluaran == 'Lainnya' ? 'selected' : '' }}>
+                                        Lainnya</option>
+                                </select>
+                                @error('jenis_pengeluaran')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="jumlah">Jumlah</label>
+                                <input type="number" class="form-control @error('jumlah') is-invalid @enderror"
+                                    id="jumlah" name="jumlah" value="{{ $item->jumlah }}" required>
+                                @error('jumlah')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="harga">Harga</label>
+                                <input type="number" class="form-control @error('harga') is-invalid @enderror"
+                                    id="harga" name="harga" value="{{ $item->harga }}" required>
+                                @error('harga')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <input type="hidden" name="old_jumlah" value="{{ $item->jumlah }}">
+                            <input type="hidden" name="old_harga" value="{{ $item->harga }}">
+                            <div class="form-group">
+                                <label for="tgl_pengeluaran">Tanggal</label>
+                                <input type="date" class="form-control @error('tgl_pengeluaran') is-invalid @enderror"
+                                    id="tgl_pengeluaran" name="tgl_pengeluaran" value="{{ $item->tgl_pengeluaran }}"
+                                    required>
+                                @error('tgl_pengeluaran')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="tujuan">Tujuan</label>
+                                <textarea class="form-control @error('tujuan') is-invalid @enderror" id="tujuan" name="tujuan" rows="3">{{ $item->tujuan }}</textarea>
+                                @error('tujuan')
+                                    <div class="text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-primary">Simpan
+                                Perubahan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endforeach
+
+    <!-- Modal Tambah Pengeluaran -->
+    <div class="modal fade" id="modalTambahPengeluaran" tabindex="-1" role="dialog"
+        aria-labelledby="modalTambahPengeluaranLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTambahPengeluaranLabel">Tambah Pengeluaran</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('pengeluaran.store') }}" method="POST">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="kode">Kode</label>
+                            <input type="text" class="form-control" id="kode" name="kode"
+                                value="{{ 'SPJ-' . date('YmdHis') }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="jenis_pengeluaran">Jenis Pengeluaran</label>
+                            <select class="form-control" id="jenis_pengeluaran" name="jenis_pengeluaran" required>
+                                <option value="" selected disabled>Pilih Jenis Pengeluaran</option>
+                                <option value="Belanja Rutin">Belanja Rutin</option>
+                                <option value="Gaji Karyawan">Gaji Karyawan</option>
+                                <option value="Setor Penghasilan">Setor Penghasilan</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="jumlah">Jumlah</label>
+                            <input type="number" class="form-control" id="jumlah" name="jumlah"
+                                placeholder="Masukkan jumlah" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="harga">Harga</label>
+                            <input type="number" class="form-control" id="harga" name="harga"
+                                placeholder="Masukkan harga" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tgl_pengeluaran">Tanggal</label>
+                            <input type="date" class="form-control" id="tgl_pengeluaran" name="tgl_pengeluaran"
+                                value="{{ date('Y-m-d') }}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tujuan">Tujuan</label>
+                            <textarea class="form-control" id="tujuan" name="tujuan" rows="3" placeholder="Masukkan tujuan"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
-@section('scripts')
-<script>
-    $(document).ready(function() {
-        $('#pengeluaranTable').DataTable({
-            "responsive": true,
-            "autoWidth": false,
-            "language": {
-                "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json"
-            }
+@push('js')
+    <script>
+        $(document).ready(function() {
+            $('#tabelPengeluaran').DataTable();
         });
-    });
-</script>
-@endsection
+    </script>
+@endpush

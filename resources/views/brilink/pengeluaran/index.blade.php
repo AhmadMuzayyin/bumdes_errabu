@@ -1,11 +1,11 @@
-@extends('layouts.app', ['title' => 'Pengeluaran Foto Copy'])
+@extends('layouts.app', ['title' => 'Pengeluaran BRI Link'])
 @section('content')
     <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="card-title">Daftar Pengeluaran Foto Copy</h3>
+                        <h3 class="card-title">Daftar Pengeluaran BRI Link</h3>
                         <button type="button" class="btn btn-primary" data-toggle="modal"
                             data-target="#modalTambahPengeluaran">
                             <i class="fas fa-plus"></i> Tambah Pengeluaran
@@ -26,7 +26,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($pengeluaran as $item)
+                                @forelse ($spendings as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->jumlah }}</td>
@@ -42,7 +42,7 @@
                                                 data-target="#modalEditPengeluaran{{ $item->id }}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <form action="{{ route('fotocopy.pengeluaran.destroy', $item->id) }}"
+                                            <form action="{{ route('brilink.dana-keluar.destroy', $item->id) }}"
                                                 method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -67,7 +67,7 @@
     </div>
 
     <!-- Modal Containers for all items -->
-    @foreach ($pengeluaran as $item)
+    @foreach ($spendings as $item)
         <!-- Modal Detail Pengeluaran -->
         <div class="modal fade" id="modalDetailPengeluaran{{ $item->id }}" tabindex="-1" role="dialog"
             aria-labelledby="modalDetailPengeluaranLabel{{ $item->id }}" aria-hidden="true">
@@ -142,7 +142,8 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form action="{{ route('fotocopy.pengeluaran.update', $item->id) }}" method="POST">
+                    <form action="{{ route('brilink.dana-keluar.update', $item->id) }}" method="POST">
+                        @method('PATCH')
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
@@ -229,13 +230,13 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <form action="{{ route('fotocopy.pengeluaran.store') }}" method="POST">
+                <form action="{{ route('brilink.dana-keluar.store') }}" method="POST">
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
                             <label for="kode">Kode</label>
                             <input type="text" class="form-control" id="kode" name="kode"
-                                value="{{ 'FCP-' . date('YmdHis') }}" readonly>
+                                value="{{ 'BRI-' . date('YmdHis') }}" readonly>
                         </div>
                         <div class="form-group">
                             <label for="jenis_pengeluaran">Jenis Pengeluaran</label>

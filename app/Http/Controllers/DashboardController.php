@@ -17,10 +17,11 @@ class DashboardController extends Controller
         if (Auth::user()->role == 'operator simpan pinjam') {
             return redirect()->route('simpan-pinjam.dashboard');
         }
-
-        // Redirect operator foto copy ke dashboard foto copy
         if (Auth::user()->role == 'operator foto copy') {
             return redirect()->route('fotocopy.dashboard');
+        }
+        if (Auth::user()->role == 'operator brilink') {
+            return redirect()->route('brilink.dashboard');
         }
 
         $income = [];
@@ -34,12 +35,12 @@ class DashboardController extends Controller
             $manual_income = Income::all();
             $manual_spending = Spending::all();
         } else {
-            $pemasukan = Income::selectRaw('SUM(nominal) as total, DATE_FORMAT(tanggal, "%Y-%m") as month')
-                ->join('badan_usahas', 'badan_usahas.id', '=', 'incomes.badan_usaha_id')
+            $pemasukan = Spending::selectRaw('SUM(nominal) as total, DATE_FORMAT(tanggal, "%Y-%m") as month')
+                ->join('badan_usahas', 'badan_usahas.id', '=', 'spendings.badan_usaha_id')
                 ->where('badan_usahas.user_id', Auth::user()->id)
                 ->groupBy('month')
                 ->get();
-            $manual_income = Income::with('badan_usaha')->whereHas('badan_usaha', function ($query) {
+            $manual_income = Spending::with('badan_usaha')->whereHas('badan_usaha', function ($query) {
                 $query->where('user_id', auth()->user()->id);
             })->get();
         }

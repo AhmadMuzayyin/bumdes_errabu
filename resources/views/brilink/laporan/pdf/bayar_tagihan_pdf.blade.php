@@ -86,7 +86,7 @@
                     <td>{{ $item->kode }}</td>
                     <td>{{ $item->nama }}</td>
                     <td>{{ $item->id_pelanggan }}</td>
-                    <td class="text-right">{{ number_format($item->nominal, 0, ',', '.') }}</td>
+                    <td class="text-right">Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
                     <td>{{ \Carbon\Carbon::parse($item->tgl_transaksi)->format('d/m/Y') }}</td>
                 </tr>
             @empty
@@ -96,7 +96,8 @@
             @endforelse
             <tr>
                 <td colspan="4" class="text-right"><strong>Total Nominal</strong></td>
-                <td colspan="2" class="text-right"><strong>{{ number_format($total_bayar_pln, 0, ',', '.') }}</strong></td>
+                <td colspan="2" class="text-right"><strong>Rp.
+                        {{ number_format($total_bayar_pln, 0, ',', '.') }}</strong></td>
             </tr>
         </tbody>
     </table>

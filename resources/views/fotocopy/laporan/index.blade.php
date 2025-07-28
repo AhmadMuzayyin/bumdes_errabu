@@ -42,7 +42,8 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h3 class="card-title">Laporan Pembayaran</h3>
-                        <button type="button" class="btn btn-success" onclick="exportTableToExcel('tabelPembayaran', 'laporan_pembayaran')">
+                        <button type="button" class="btn btn-success"
+                            onclick="exportTableToExcel('tabelPembayaran', 'laporan_pembayaran')">
                             <i class="fas fa-file-excel"></i> Export Excel
                         </button>
                     </div>
@@ -61,7 +62,7 @@
                             <tbody>
                                 @php $totalPembayaran = 0; @endphp
                                 @forelse ($pembayaran as $item)
-                                    @php $totalPembayaran += $item->total_pembayaran; @endphp
+                                    @php $totalPembayaran += $item->total_pembayaran * $item->jumlah; @endphp
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->jumlah }}</td>
@@ -77,7 +78,7 @@
                             <tfoot>
                                 <tr>
                                     <th colspan="2">Total</th>
-                                    <th>{{ number_format($totalPembayaran, 0, ',', '.') }}</th>
+                                    <th>Rp. {{ number_format($totalPembayaran, 0, ',', '.') }}</th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -92,7 +93,8 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h3 class="card-title">Laporan Pengeluaran</h3>
-                        <button type="button" class="btn btn-success" onclick="exportTableToExcel('tabelPengeluaran', 'laporan_pengeluaran')">
+                        <button type="button" class="btn btn-success"
+                            onclick="exportTableToExcel('tabelPengeluaran', 'laporan_pengeluaran')">
                             <i class="fas fa-file-excel"></i> Export Excel
                         </button>
                     </div>
@@ -113,12 +115,12 @@
                             <tbody>
                                 @php $totalPengeluaran = 0; @endphp
                                 @forelse ($pengeluaran as $item)
-                                    @php $totalPengeluaran += $item->harga; @endphp
+                                    @php $totalPengeluaran += $item->harga*$item->jumlah; @endphp
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->kode }}</td>
                                         <td>{{ $item->jumlah }}</td>
-                                        <td>{{ number_format($item->harga, 0, ',', '.') }}</td>
+                                        <td>Rp. {{ number_format($item->harga, 0, ',', '.') }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tgl_pengeluaran)->format('d/m/Y') }}</td>
                                         <td>{{ $item->tujuan }}</td>
                                     </tr>
@@ -131,7 +133,7 @@
                             <tfoot>
                                 <tr>
                                     <th colspan="3">Total</th>
-                                    <th>{{ number_format($totalPengeluaran, 0, ',', '.') }}</th>
+                                    <th>Rp. {{ number_format($totalPengeluaran, 0, ',', '.') }}</th>
                                     <th colspan="2"></th>
                                 </tr>
                             </tfoot>
@@ -153,11 +155,11 @@
                         <table class="table table-bordered">
                             <tr>
                                 <th>Total Pembayaran</th>
-                                <td>{{ number_format($totalPembayaran ?? 0, 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($totalPembayaran ?? 0, 0, ',', '.') }}</td>
                             </tr>
                             <tr>
                                 <th>Total Pengeluaran</th>
-                                <td>{{ number_format($totalPengeluaran ?? 0, 0, ',', '.') }}</td>
+                                <td>Rp. {{ number_format($totalPengeluaran ?? 0, 0, ',', '.') }}</td>
                             </tr>
                         </table>
                     </div>
@@ -174,7 +176,7 @@
                 "paging": false,
                 "searching": false
             });
-            
+
             $('#tabelPengeluaran').DataTable({
                 "paging": false,
                 "searching": false
@@ -186,27 +188,27 @@
             var dataType = 'application/vnd.ms-excel';
             var tableSelect = document.getElementById(tableID);
             var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
-            
+
             // Specify file name
-            filename = filename?filename+'.xls':'excel_data.xls';
-            
+            filename = filename ? filename + '.xls' : 'excel_data.xls';
+
             // Create download link element
             downloadLink = document.createElement("a");
-            
+
             document.body.appendChild(downloadLink);
-            
-            if(navigator.msSaveOrOpenBlob){
+
+            if (navigator.msSaveOrOpenBlob) {
                 var blob = new Blob(['\ufeff', tableHTML], {
                     type: dataType
                 });
-                navigator.msSaveOrOpenBlob( blob, filename);
+                navigator.msSaveOrOpenBlob(blob, filename);
             } else {
                 // Create a link to the file
                 downloadLink.href = 'data:' + dataType + ', ' + tableHTML;
-            
+
                 // Setting the file name
                 downloadLink.download = filename;
-                
+
                 //triggering the function
                 downloadLink.click();
             }

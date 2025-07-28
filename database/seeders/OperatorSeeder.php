@@ -18,7 +18,7 @@ class OperatorSeeder extends Seeder
         foreach ($operators_type as $key => $value) {
             User::factory()->create([
                 'name' => $operators_type[$key],
-                'email' => Str::slug($operators_type[$key]) . '@bumdes.com',
+                'email' => Str::slug(str_replace('operator', '', $operators_type[$key])) . '@bumdes.com',
                 'email_verified_at' => now(),
                 'role' => $operators_type[$key],
                 'password' => bcrypt('password'),

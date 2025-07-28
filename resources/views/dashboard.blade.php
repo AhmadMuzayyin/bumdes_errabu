@@ -45,7 +45,7 @@
                             <thead>
                                 <th>#</th>
                                 @if (auth()->user()->role == 'admin')
-                                    <th>Badan Usaha</th>
+                                    <th>Sumber Dana</th>
                                 @endif
                                 <th>Nominal</th>
                                 <th>Tanggal</th>
@@ -58,7 +58,7 @@
                                     <tr>
                                         @if (auth()->user()->role == 'admin')
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $pemasukan->badan_usaha->nama }}</td>
+                                            <td>{{ $pemasukan->sumber_dana }}</td>
                                             <td>{{ $pemasukan->nominal }}</td>
                                             <td>{{ date('d F Y', strtotime($pemasukan->tanggal)) }}</td>
                                         @else

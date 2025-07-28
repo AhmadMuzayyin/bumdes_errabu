@@ -12,13 +12,13 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @if(session('success'))
+                    @if (session('success'))
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
-                    @if(session('error'))
+                    @if (session('error'))
                         <div class="alert alert-danger">{{ session('error') }}</div>
                     @endif
-                    
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped" id="pinjamanTable">
                             <thead>
@@ -34,16 +34,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach($pinjaman as $key => $item)
+                                @foreach ($pinjaman as $key => $item)
                                     <tr>
                                         <td>{{ $key + 1 }}</td>
                                         <td>{{ $item->nasabah->nama }}</td>
                                         <td>{{ $item->nominal }}</td>
-                                        <td>{{ $bunga }} (Rp {{ number_format($item->original_nominal * $original_bunga / 100, 0, ',', '.') }})</td>
-                                        <td>{{ $item->nominal_pengembalian }}</td>
+                                        <td>{{ $bunga }} (Rp
+                                            {{ number_format(($item->original_nominal * $original_bunga) / 100, 0, ',', '.') }})
+                                        </td>
+                                        <td>Rp. {{ number_format($item->nominal_pengembalian, 0, ',', '.') }}</td>
                                         <td>{{ $item->tgl_pinjam }}</td>
                                         <td>
-                                            @if($item->status == 'Lunas')
+                                            @if ($item->status == 'Lunas')
                                                 <span class="badge badge-success">Lunas</span>
                                             @else
                                                 <span class="badge badge-warning">Belum Lunas</span>
@@ -53,13 +55,16 @@
                                             <a href="{{ route('pinjaman.show', $item->id) }}" class="btn btn-info btn-sm">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-                                            <a href="{{ route('pinjaman.edit', $item->id) }}" class="btn btn-warning btn-sm">
+                                            <a href="{{ route('pinjaman.edit', $item->id) }}"
+                                                class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form action="{{ route('pinjaman.destroy', $item->id) }}" method="POST" class="d-inline">
+                                            <form action="{{ route('pinjaman.destroy', $item->id) }}" method="POST"
+                                                class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah Anda yakin ingin menghapus data pinjaman ini?')">
+                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                    onclick="return confirm('Apakah Anda yakin ingin menghapus data pinjaman ini?')">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -76,15 +81,15 @@
 @endsection
 
 @section('scripts')
-<script>
-    $(document).ready(function() {
-        $('#pinjamanTable').DataTable({
-            "responsive": true,
-            "autoWidth": false,
-            "language": {
-                "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json"
-            }
+    <script>
+        $(document).ready(function() {
+            $('#pinjamanTable').DataTable({
+                "responsive": true,
+                "autoWidth": false,
+                "language": {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.25/i18n/Indonesian.json"
+                }
+            });
         });
-    });
-</script>
+    </script>
 @endsection

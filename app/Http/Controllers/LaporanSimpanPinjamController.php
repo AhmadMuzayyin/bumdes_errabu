@@ -581,7 +581,7 @@ class LaporanSimpanPinjamController extends Controller
             ->get();
 
         $total = $pengeluaran->sum(function ($item) {
-            return $item->getOriginalJumlahAttribute();
+            return $item->harga;
         });
 
         return response()->json([

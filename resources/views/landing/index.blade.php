@@ -320,8 +320,8 @@
                                 @foreach ($keuangan as $dana)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $dana->badan_usaha->nama }}</td>
-                                        <td>{{ $dana->badan_usaha->user->name }}</td>
+                                        <td>{{ $dana }}</td>
+                                        <td>{{ $dana }}</td>
                                         <td>{{ $dana->nominal }}</td>
                                     </tr>
                                 @endforeach

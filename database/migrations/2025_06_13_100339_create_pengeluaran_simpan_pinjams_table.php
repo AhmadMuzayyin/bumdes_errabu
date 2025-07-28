@@ -14,7 +14,9 @@ return new class extends Migration
         Schema::create('pengeluaran_simpan_pinjams', function (Blueprint $table) {
             $table->id();
             $table->string('kode')->unique();
+            $table->enum('jenis_pengeluaran', ['Belanja Rutin', 'Gaji Karyawan', 'Setor Pengahsilan', 'Lainnya']);
             $table->bigInteger('jumlah');
+            $table->bigInteger('harga')->default(0);
             $table->date('tgl_pengeluaran');
             $table->string('tujuan')->nullable();
             $table->timestamps();

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\HargaFotoCopy;
 use App\Models\PembayaranFotoCopy;
 use App\Models\PengeluaranFotoCopy;
+use App\Models\Spending;
 use Illuminate\Support\Facades\Auth;
 
 class FotoCopyDashboardController extends Controller
@@ -37,6 +38,7 @@ class FotoCopyDashboardController extends Controller
         // Total pembayaran dan pengeluaran
         $totalPembayaran = PembayaranFotoCopy::sum('total_pembayaran');
         $totalPengeluaran = PengeluaranFotoCopy::sum('harga');
+        $totalPemasukan = Spending::where('badan_usaha_id', auth()->user()->badan_usaha->id)->sum('nominal');
 
         return view('fotocopy.dashboard', compact(
             'harga',
@@ -45,7 +47,8 @@ class FotoCopyDashboardController extends Controller
             'pembayaranTerakhir',
             'pengeluaranTerakhir',
             'totalPembayaran',
-            'totalPengeluaran'
+            'totalPengeluaran',
+            'totalPemasukan'
         ));
     }
 }

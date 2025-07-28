@@ -16,7 +16,7 @@ class SimpananController extends Controller
      */
     public function index()
     {
-        $simpanan = Simpanan::with('nasabah')->latest()->get();
+        $simpanan = Simpanan::with('nasabah')->get();
         return view('simpan-pinjam.simpanan.index', compact('simpanan'));
     }
 
@@ -51,11 +51,6 @@ class SimpananController extends Controller
         DB::beginTransaction();
         try {
             $simpanan = Simpanan::create($request->all());
-            Income::create([
-                'badan_usaha_id' => auth()->user()->badan_usaha->id,
-                'nominal' => $simpanan->original_nominal,
-                'tanggal' => $simpanan->tgl_simpan,
-            ]);
             DB::commit();
             return redirect()->route('simpanan.index')
                 ->with('success', 'Data simpanan berhasil ditambahkan');
@@ -109,13 +104,6 @@ class SimpananController extends Controller
         DB::beginTransaction();
         try {
             $simpanan->update($request->all());
-            Income::where('badan_usaha_id', auth()->user()->badan_usaha->id)
-                ->where('tanggal', $request->tgl_simpan)
-                ->where('nominal', $request->original_nominal)
-                ->update([
-                    'nominal' => $request->nominal,
-                    'tanggal' => $request->tgl_simpan,
-                ]);
             DB::commit();
             return redirect()->route('simpanan.index')
                 ->with('success', 'Data simpanan berhasil diperbarui');

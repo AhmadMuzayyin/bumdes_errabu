@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\HargaFotoCopy;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,6 +14,7 @@ return new class extends Migration
     {
         Schema::create('pembayaran_foto_copies', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(HargaFotoCopy::class)->constrained()->cascadeOnDelete();
             $table->bigInteger('jumlah');
             $table->bigInteger('total_pembayaran');
             $table->date('tgl_pembayaran');

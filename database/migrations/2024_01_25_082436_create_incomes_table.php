@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('incomes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(BadanUsaha::class)->constrained()->cascadeOnDelete();
+            $table->enum('sumber_dana', ['APB DESA', 'BANK', 'PEMERINTAH PROVINSI', 'PEMERINTAH KOTA', 'PIHAK KETIGA', 'LAIN-LAIN', 'Penghasilan Foto Copy', 'Penghasilan BRI Link', 'Penghasilan Simpan Pinjam']);
             $table->bigInteger('nominal');
             $table->date('tanggal');
             $table->timestamps();

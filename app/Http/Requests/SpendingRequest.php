@@ -22,8 +22,9 @@ class SpendingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'tujuan' => 'required|string',
+            'badan_usaha_id' => 'required|exists:badan_usahas,id',
             'nominal' => 'required|integer',
+            'keterangan' => 'nullable|string|max:255',
             'tanggal' => 'required|date',
         ];
     }

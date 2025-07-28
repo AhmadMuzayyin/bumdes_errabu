@@ -26,11 +26,6 @@ class Simpanan extends Model
         return $this->attributes['nominal'];
     }
 
-    public function getTglSimpanFormatedAttribute($value)
-    {
-        return date('d F Y', $value);
-    }
-
     public function scopeWhereTipeTransaksi($query, $kategori)
     {
         return $query;

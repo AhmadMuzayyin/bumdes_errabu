@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Tarik Tunai BRI Link</title>
+    <title>Laporan Setor Tunai BRI Link</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,7 +63,7 @@
 
 <body>
     <div class="header">
-        <h2>LAPORAN TARIK TUNAI BRI LINK</h2>
+        <h2>LAPORAN SETOR TUNAI BRI LINK</h2>
         <p>Periode: {{ $periode }}</p>
         <p>Tanggal Cetak: {{ $tanggal_cetak }}</p>
     </div>
@@ -72,34 +72,39 @@
         <thead>
             <tr>
                 <th width="5%">No</th>
-                <th>Kode Transaksi</th>
-                <th>Nama</th>
-                <th>No Rekening</th>
-                <th>No Rekening Tujuan</th>
+                <th>Kode</th>
+                <th>Jenis Pengeluaran</th>
+                <th>Jumlah</th>
                 <th>Nominal</th>
                 <th>Tanggal</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($tarik_tunai as $index => $item)
+            @php
+                $total_pegeluaran = 0;
+            @endphp
+            @forelse ($pengeluaran as $index => $item)
+                @php
+                    $total_pegeluaran += $item->harga * $item->jumlah;
+                @endphp
                 <tr>
-                    <td class="text-center">{{ $index + 1 }}</td>
-                    <td>{{ $item->kode_transaksi }}</td>
-                    <td>{{ $item->nama }}</td>
-                    <td>{{ $item->norek }}</td>
-                    <td>{{ $item->norek_tujuan }}</td>
-                    <td class="text-right">Rp. {{ number_format($item->nominal, 0, ',', '.') }}</td>
-                    <td>{{ \Carbon\Carbon::parse($item->tgl_tarik_tunai)->format('d/m/Y') }}</td>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $item->kode }}</td>
+                    <td>{{ $item->jenis_pengeluaran }}</td>
+                    <td>{{ $item->jumlah }}</td>
+                    <td>Rp. {{ number_format($item->harga, 0, ',', '.') }}</td>
+                    <td>{{ \Carbon\Carbon::parse($item->tgl_transaksi)->format('d/m/Y') }}</td>
                 </tr>
             @empty
                 <tr>
-                    <td colspan="7" class="text-center">Tidak ada data</td>
+                    <td colspan="6" class="text-center">Tidak ada data</td>
                 </tr>
             @endforelse
             <tr>
-                <td colspan="5" class="text-right"><strong>Total Nominal</strong></td>
-                <td colspan="2" class="text-right"><strong>Rp.
-                        {{ number_format($total_tarik, 0, ',', '.') }}</strong></td>
+                <td colspan="4" class="text-right"><strong>Total Nominal</strong></td>
+                <td colspan="2" class="text-right">
+                    <strong>Rp. {{ number_format($total_pegeluaran, 0, ',', '.') }}</strong>
+                </td>
             </tr>
         </tbody>
     </table>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\FotoCopy;
 
 use App\Http\Controllers\Controller;
+use App\Models\HargaFotoCopy;
 use App\Models\Income;
 use App\Models\PembayaranFotoCopy;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class PembayaranFotoCopyController extends Controller
     public function index()
     {
         $pembayaran = PembayaranFotoCopy::orderBy('tgl_pembayaran', 'desc')->get();
-        return view('fotocopy.pembayaran.index', compact('pembayaran'));
+        $kertas = HargaFotoCopy::all();
+        return view('fotocopy.pembayaran.index', compact('pembayaran', 'kertas'));
     }
 
     /**
@@ -25,6 +27,7 @@ class PembayaranFotoCopyController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'jenis_kertas' => 'required|exists:harga_foto_copies,id',
             'jumlah' => 'required|integer|min:1',
             'total_pembayaran' => 'required|numeric|min:0',
             'tgl_pembayaran' => 'required|date',
@@ -32,11 +35,12 @@ class PembayaranFotoCopyController extends Controller
 
         try {
             DB::beginTransaction();
-            PembayaranFotoCopy::create($request->all());
-            Income::create([
-                'badan_usaha_id' => auth()->user()->badan_usaha->id,
-                'nominal' => $request->total_pembayaran,
-                'tanggal' => $request->tgl_pembayaran,
+
+            PembayaranFotoCopy::create([
+                'harga_foto_copy_id' => $request->jenis_kertas,
+                'jumlah' => $request->jumlah,
+                'total_pembayaran' => $request->total_pembayaran,
+                'tgl_pembayaran' => $request->tgl_pembayaran,
             ]);
             DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil ditambahkan');

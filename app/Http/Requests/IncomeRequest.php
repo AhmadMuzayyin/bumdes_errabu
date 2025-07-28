@@ -22,7 +22,7 @@ class IncomeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'badan_usaha_id' => ['required', 'exists:badan_usahas,id'],
+            'sumber_dana' => ['required', 'string', 'max:255'],
             'nominal' => ['required', 'numeric'],
             'tanggal' => ['required', 'date'],
         ];

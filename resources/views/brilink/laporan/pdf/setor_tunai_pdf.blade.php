@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Setor Tunai BRI Link</title>
+    <title>Laporan Pengeluaran BRI Link</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -63,7 +63,7 @@
 
 <body>
     <div class="header">
-        <h2>LAPORAN SETOR TUNAI BRI LINK</h2>
+        <h2>LAPORAN PENGELUARAN BRI LINK</h2>
         <p>Periode: {{ $periode }}</p>
         <p>Tanggal Cetak: {{ $tanggal_cetak }}</p>
     </div>
@@ -98,7 +98,8 @@
             @endforelse
             <tr>
                 <td colspan="5" class="text-right"><strong>Total Nominal</strong></td>
-                <td colspan="2" class="text-right"><strong>{{ number_format($total_setor, 0, ',', '.') }}</strong></td>
+                <td colspan="2" class="text-right"><strong>{{ number_format($total_setor, 0, ',', '.') }}</strong>
+                </td>
             </tr>
         </tbody>
     </table>

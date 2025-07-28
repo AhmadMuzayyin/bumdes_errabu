@@ -11,7 +11,7 @@ class HomeController extends Controller
     public function __invoke()
     {
         $badan_usaha = BadanUsaha::with('user')->get();
-        $keuangan = Income::with('badan_usaha')->get();
+        $keuangan = Income::all();
         $pengeluaran = Spending::all();
         return view('landing.index', compact('badan_usaha', 'keuangan', 'pengeluaran'));
     }

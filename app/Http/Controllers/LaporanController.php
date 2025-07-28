@@ -12,6 +12,7 @@ use App\Models\BriLinkTarikTunai;
 use App\Models\BriLinkBayarTagihanPln;
 use App\Models\Simpanan;
 use App\Models\PengambilanSimpanan;
+use App\Models\PengeluaranBriLink;
 use App\Models\Pinjamans;
 use App\Models\PengembalianPinjamans;
 use App\Models\PengeluaranSimpanPinjam;
@@ -142,7 +143,7 @@ class LaporanController extends Controller
         $totalDanaMasuk += $summaryDanaMasuk['simpan_pinjam'];
         $totalDanaKeluar += $summaryDanaKeluar['simpan_pinjam'];
 
-        return view('laporan.index', compact(
+        return view('brilink.laporan.index', compact(
             'tanggalMulai',
             'tanggalSelesai',
             'badanUsahaId',
@@ -154,7 +155,7 @@ class LaporanController extends Controller
             'totalDanaMasuk',
             'totalDanaKeluar',
             'brilinkTransaksi',
-            'simpanPinjamData'
+            'simpanPinjamData',
         ));
     }
 

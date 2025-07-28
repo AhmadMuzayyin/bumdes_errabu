@@ -15,19 +15,19 @@
                     data-accordion="false">
                     @if (auth()->user()->role == 'admin')
                         <li class="nav-item">
-                        <a href="{{ route('dashboard') }}"
-                            class="nav-link {{ request()->routeIs('*.dashboard') || request()->routeIs('dashboard') ? 'active' : '' }}">
-                            <ion-icon class="nav-icon" name="home"></ion-icon>
-                            <p>
-                                Dashboard
-                            </p>
-                        </a>
-                    </li>
+                            <a href="{{ route('dashboard') }}"
+                                class="nav-link {{ request()->routeIs('*.dashboard') || request()->routeIs('dashboard') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="home"></ion-icon>
+                                <p>
+                                    Dashboard
+                                </p>
+                            </a>
+                        </li>
                     @endif
-                    
+
                     {{-- Menu Simpan Pinjam --}}
                     @if (auth()->user()->role == 'operator simpan pinjam')
-                    <li class="nav-item">
+                        <li class="nav-item">
                             <a href="{{ route('simpan-pinjam.dashboard') }}"
                                 class="nav-link {{ request()->routeIs('simpan-pinjam.dashboard') ? 'active' : '' }}">
                                 <ion-icon class="nav-icon" name="home"></ion-icon>
@@ -45,8 +45,10 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item {{ request()->routeIs('simpanan.*') || request()->routeIs('pengambilan-simpanan.*') ? 'menu-open' : '' }}">
-                            <a href="#" class="nav-link {{ request()->routeIs('simpanan.*') || request()->routeIs('pengambilan-simpanan.*') ? 'active' : '' }}">
+                        <li
+                            class="nav-item {{ request()->routeIs('simpanan.*') || request()->routeIs('pengambilan-simpanan.*') ? 'menu-open' : '' }}">
+                            <a href="#"
+                                class="nav-link {{ request()->routeIs('simpanan.*') || request()->routeIs('pengambilan-simpanan.*') ? 'active' : '' }}">
                                 <ion-icon class="nav-icon" name="wallet"></ion-icon>
                                 <p>
                                     Simpanan
@@ -70,8 +72,10 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item {{ request()->routeIs('pinjaman.*') || request()->routeIs('pengembalian-pinjaman.*') ? 'menu-open' : '' }}">
-                            <a href="#" class="nav-link {{ request()->routeIs('pinjaman.*') || request()->routeIs('pengembalian-pinjaman.*') ? 'active' : '' }}">
+                        <li
+                            class="nav-item {{ request()->routeIs('pinjaman.*') || request()->routeIs('pengembalian-pinjaman.*') ? 'menu-open' : '' }}">
+                            <a href="#"
+                                class="nav-link {{ request()->routeIs('pinjaman.*') || request()->routeIs('pengembalian-pinjaman.*') ? 'active' : '' }}">
                                 <ion-icon class="nav-icon" name="cash"></ion-icon>
                                 <p>
                                     Pinjaman
@@ -94,6 +98,15 @@
                                     </a>
                                 </li>
                             </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('pemasukan.index') }}"
+                                class="nav-link {{ request()->routeIs('pemasukan.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="trending-up-outline"></ion-icon>
+                                <p>
+                                    Dana Masuk
+                                </p>
+                            </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('pengeluaran.index') }}"
@@ -127,6 +140,15 @@
                     {{-- Menu Operator Foto Copy --}}
                     @if (auth()->user()->role == 'operator foto copy')
                         <li class="nav-item">
+                            <a href="{{ route('fotocopy.dashboard') }}"
+                                class="nav-link {{ request()->routeIs('fotocopy.dashboard') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="home"></ion-icon>
+                                <p>
+                                    Dashboard
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('fotocopy.harga.index') }}"
                                 class="nav-link {{ request()->routeIs('fotocopy.harga.*') ? 'active' : '' }}">
                                 <ion-icon class="nav-icon" name="pricetag"></ion-icon>
@@ -141,6 +163,15 @@
                                 <ion-icon class="nav-icon" name="cash"></ion-icon>
                                 <p>
                                     Pembayaran
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('fotocopy.pemasukan.index') }}"
+                                class="nav-link {{ request()->routeIs('fotocopy.pemasukan.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="trending-up"></ion-icon>
+                                <p>
+                                    Pemasukan
                                 </p>
                             </a>
                         </li>
@@ -172,6 +203,24 @@
                                 <ion-icon class="nav-icon" name="home"></ion-icon>
                                 <p>
                                     Dashboard
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('brilink.dana-masuk.index') }}"
+                                class="nav-link {{ request()->routeIs('brilink.dana-masuk.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="trending-up-outline"></ion-icon>
+                                <p>
+                                    Dana Masuk
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('brilink.dana-keluar.index') }}"
+                                class="nav-link {{ request()->routeIs('brilink.dana-keluar.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="trending-down-outline"></ion-icon>
+                                <p>
+                                    Dana Keluar
                                 </p>
                             </a>
                         </li>
@@ -212,7 +261,7 @@
                             </a>
                         </li>
                     @endif
-                    
+
                     @if (auth()->user()->role == 'admin')
                         <li class="nav-item">
                             <a href="{{ route('operator.index') }}"
@@ -233,6 +282,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('income.index') }}"
+                                class="nav-link {{ request()->routeIs('income.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="card"></ion-icon>
+                                <p>
+                                    Dana Masuk
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('spending.index') }}"
                                 class="nav-link {{ request()->routeIs('spending.*') ? 'active' : '' }}">
                                 <ion-icon class="nav-icon" name="cash"></ion-icon>
@@ -247,17 +305,6 @@
                                 <ion-icon class="nav-icon" name="document-text"></ion-icon>
                                 <p>
                                     Laporan
-                                </p>
-                            </a>
-                        </li>
-                    @endif
-                    @if (auth()->user()->role == 'operator' && auth()->user()->name != 'simpanpinjam')
-                        <li class="nav-item">
-                            <a href="{{ route('income.index') }}"
-                                class="nav-link {{ request()->routeIs('income.*') ? 'active' : '' }}">
-                                <ion-icon class="nav-icon" name="card"></ion-icon>
-                                <p>
-                                    Dana Masuk
                                 </p>
                             </a>
                         </li>

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pengeluaran_foto_copies', function (Blueprint $table) {
+        Schema::create('pengeluaran_bri_links', function (Blueprint $table) {
             $table->id();
             $table->string('kode')->unique();
             $table->enum('jenis_pengeluaran', ['Belanja Rutin', 'Gaji Karyawan', 'Setor Pengahsilan', 'Lainnya']);
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('pengeluaran_foto_copies');
+        Schema::dropIfExists('pengeluaran_bri_links');
     }
 };
