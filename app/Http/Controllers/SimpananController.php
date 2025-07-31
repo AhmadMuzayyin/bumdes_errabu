@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Income;
+use App\Models\IncomeBadanUsaha;
 use Illuminate\Http\Request;
 use App\Models\Simpanan;
 use App\Models\Nasabah;
@@ -51,6 +52,11 @@ class SimpananController extends Controller
         DB::beginTransaction();
         try {
             $simpanan = Simpanan::create($request->all());
+            IncomeBadanUsaha::create([
+                'badan_usaha_id' => auth()->user()->badan_usaha->id,
+                'nominal' => $request->nominal,
+                'jenis_pemasukan' => 'Pendapatan Usaha',
+            ]);
             DB::commit();
             return redirect()->route('simpanan.index')
                 ->with('success', 'Data simpanan berhasil ditambahkan');
@@ -103,6 +109,11 @@ class SimpananController extends Controller
         // Mulai transaksi database untuk memastikan konsistensi data
         DB::beginTransaction();
         try {
+            IncomeBadanUsaha::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+                ->where('jenis_pemasukan', 'Pendapatan Usaha')
+                ->where('created_at', $simpanan->created_at)
+                ->where('nominal', $simpanan->OriginalNominal)
+                ->update(['nominal' => $request->nominal]);
             $simpanan->update($request->all());
             DB::commit();
             return redirect()->route('simpanan.index')
@@ -120,6 +131,11 @@ class SimpananController extends Controller
         $simpanan = Simpanan::findOrFail($id);
         DB::beginTransaction();
         try {
+            IncomeBadanUsaha::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+                ->where('jenis_pemasukan', 'Pendapatan Usaha')
+                ->where('created_at', $simpanan->created_at)
+                ->where('nominal', $simpanan->OriginalNominal)
+                ->delete();
             $simpanan->delete();
             DB::commit();
             return redirect()->route('simpanan.index')

@@ -25,9 +25,9 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td>{{ $item->nominal }}</td>
                                         <td>
-                                            <textarea class="form-control" readonly>{{ $item->keterangan }}</textarea>
+                                            <textarea class="form-control" readonly>{{ $item->jenis_pemasukan }}</textarea>
                                         </td>
-                                        <td>{{ \Carbon\Carbon::parse($item->tanggal)->format('d F Y') }}</td>
+                                        <td>{{ date('d F Y', strtotime($item->created_at)) }}</td>
                                     </tr>
                                 @empty
                                     <tr>

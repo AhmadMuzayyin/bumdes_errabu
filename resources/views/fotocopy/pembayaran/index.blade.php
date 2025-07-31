@@ -128,16 +128,18 @@
                     </div>
                     <form action="{{ route('fotocopy.pembayaran.update', $item->id) }}" method="POST">
                         @csrf
+                        <input type="hidden" name="jenis_kertas" id="jenis_kertas{{ $item->id }}"
+                            value="{{ $item->harga_foto_copy->OriginalHarga }}">
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="jumlah">Jumlah</label>
-                                <input type="number" class="form-control" id="jumlah" name="jumlah"
+                                <input type="number" class="form-control" id="jumlah{{ $item->id }}" name="jumlah"
                                     value="{{ $item->jumlah }}" required>
                             </div>
                             <div class="form-group">
                                 <label for="total_pembayaran">Total Pembayaran</label>
-                                <input type="number" class="form-control" id="total_pembayaran" name="total_pembayaran"
-                                    value="{{ $item->total_pembayaran }}" required>
+                                <input type="number" class="form-control" id="total_pembayaran{{ $item->id }}"
+                                    name="total_pembayaran" value="{{ $item->total_pembayaran }}" readonly>
                             </div>
                             <div class="form-group">
                                 <label for="tgl_pembayaran">Tanggal</label>
@@ -154,6 +156,25 @@
                 </div>
             </div>
         </div>
+        @push('js')
+            <script>
+                $(document).ready(function() {
+                    $("#modalEditPembayaran{{ $item->id }}").on('shown.bs.modal', function() {
+                        $('#jumlah{{ $item->id }}').focus();
+                        $('#jumlah{{ $item->id }}').on('change', function() {
+                            var harga = $('#jenis_kertas{{ $item->id }}').val();
+                            var jumlah = $('#jumlah{{ $item->id }}').val();
+                            if (harga && jumlah) {
+                                var total = parseInt(harga) * parseInt(jumlah);
+                                $('#total_pembayaran{{ $item->id }}').val(total);
+                            } else {
+                                $('#total_pembayaran{{ $item->id }}').val('');
+                            }
+                        });
+                    });
+                });
+            </script>
+        @endpush
     @endforeach
 
     <!-- Modal Tambah Pembayaran -->
@@ -171,8 +192,8 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="jenis_kertas">Jenis Kertas</label>
-                            <select name="jenis_kertas" id="jenis_kertas" class="form-control" required>
+                            <label for="jenis_kertas_add">Jenis Kertas</label>
+                            <select name="jenis_kertas" id="jenis_kertas_add" class="form-control" required>
                                 <option value="" disabled selected>Pilih Jenis Kertas</option>
                                 @foreach ($kertas as $item)
                                     <option value="{{ $item->id }}" data-harga="{{ $item->originalHarga }}">
@@ -181,13 +202,13 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="jumlah">Jumlah</label>
-                            <input type="number" class="form-control" id="jumlah" name="jumlah"
+                            <label for="jumlah_add">Jumlah</label>
+                            <input type="number" class="form-control" id="jumlah_add" name="jumlah"
                                 placeholder="Masukkan jumlah" required>
                         </div>
                         <div class="form-group">
-                            <label for="total_pembayaran">Total Pembayaran</label>
-                            <input type="number" class="form-control" id="total_pembayaran" name="total_pembayaran"
+                            <label for="total_pembayaran_add">Total Pembayaran</label>
+                            <input type="number" class="form-control" id="total_pembayaran_add" name="total_pembayaran"
                                 placeholder="Masukkan total pembayaran" readonly>
                         </div>
                         <div class="form-group">
@@ -209,15 +230,17 @@
 @push('js')
     <script>
         $(document).ready(function() {
-            $('#jenis_kertas, #jumlah').on('change', function() {
-                var harga = $('#jenis_kertas option:selected').data('harga');
-                var jumlah = $('#jumlah').val();
-                if (harga && jumlah) {
-                    var total = parseInt(harga) * parseInt(jumlah);
-                    $('#total_pembayaran').val(total);
-                } else {
-                    $('#total_pembayaran').val('');
-                }
+            $('#modalTambahPembayaran').on('shown.bs.modal', function() {
+                $('#jenis_kertas_add, #jumlah_add').on('change', function() {
+                    var harga = $('#jenis_kertas_add option:selected').data('harga');
+                    var jumlah = $('#jumlah_add').val();
+                    if (harga && jumlah) {
+                        var total = parseInt(harga) * parseInt(jumlah);
+                        $('#total_pembayaran_add').val(total);
+                    } else {
+                        $('#total_pembayaran_add').val('');
+                    }
+                });
             });
         });
         $(document).ready(function() {

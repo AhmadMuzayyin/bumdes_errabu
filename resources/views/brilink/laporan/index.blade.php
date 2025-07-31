@@ -227,9 +227,9 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>Rp. {{ number_format($item->originalNominal, 0, ',', '.') }}</td>
                                         <td>
-                                            <textarea class="form-control" readonly>{{ $item->keterangan }}</textarea>
+                                            {{ $item->jenis_pemasukan }}
                                         </td>
-                                        <td>{{ \Carbon\Carbon::parse($item->tgl_transaksi)->format('d/m/Y') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($item->created_at)->format('d/m/Y') }}</td>
                                     </tr>
                                 @empty
                                     <tr>

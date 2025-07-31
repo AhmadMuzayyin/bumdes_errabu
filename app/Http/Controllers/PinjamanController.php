@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pinjamans;
 use App\Models\Nasabah;
+use App\Models\PengeluaranSimpanPinjam;
 use App\Models\SettingPinjaman;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -61,13 +62,22 @@ class PinjamanController extends Controller
             $totalPinjaman = $nominalPokok + $nominalBunga;
 
             // Buat data pinjaman
+            $nasabah = Nasabah::findOrFail($request->nasabah_id);
             $pinjaman = new Pinjamans();
-            $pinjaman->nasabah_id = $request->nasabah_id;
+            $pinjaman->nasabah_id = $nasabah->id;
             $pinjaman->nominal = $request->nominal;
             $pinjaman->tgl_pinjam = $request->tgl_pinjam;
             $pinjaman->nominal_pengembalian = $totalPinjaman;
             $pinjaman->status = 'Belum Lunas';
             $pinjaman->save();
+            PengeluaranSimpanPinjam::create([
+                'kode' => 'PINJ-' . $pinjaman->created_at->format('YmdHis'),
+                'jenis_pengeluaran' => 'Lainnya',
+                'jumlah' => 1,
+                'harga' => $request->nominal,
+                'tgl_pengeluaran' => now(),
+                'tujuan' => 'Pinjaman untuk Nasabah: ' . $nasabah->nama,
+            ]);
 
             DB::commit();
             return redirect()->route('pinjaman.index')
@@ -132,11 +142,21 @@ class PinjamanController extends Controller
                 return redirect()->back()
                     ->with('error', 'Pinjaman sudah memiliki catatan pengembalian, tidak dapat diubah.');
             }
-            $pinjaman->nasabah_id = $request->nasabah_id;
+            $nasabah = Nasabah::findOrFail($request->nasabah_id);
+            $pinjaman->nasabah_id = $nasabah->id;
             $pinjaman->nominal = $request->nominal;
             $pinjaman->tgl_pinjam = $request->tgl_pinjam;
             $pinjaman->nominal_pengembalian = $totalPinjaman;
             $pinjaman->save();
+            PengeluaranSimpanPinjam::where('kode', 'PINJ-' . $pinjaman->created_at->format('YmdHis'))
+                ->update([
+                    'kode' => 'PINJ-' . $pinjaman->created_at->format('YmdHis'),
+                    'jenis_pengeluaran' => 'Lainnya',
+                    'jumlah' => 1,
+                    'harga' => $request->nominal,
+                    'tgl_pengeluaran' => now(),
+                    'tujuan' => 'Pinjaman untuk Nasabah: ' . $nasabah->nama,
+                ]);
 
             DB::commit();
             return redirect()->route('pinjaman.index')
@@ -155,16 +175,14 @@ class PinjamanController extends Controller
     public function destroy(string $id)
     {
         $pinjaman = Pinjamans::findOrFail($id);
-
-        // Cek apakah pinjaman sudah memiliki pengembalian
         if ($pinjaman->pengembalianPinjaman()->count() > 0) {
             return redirect()->back()
                 ->with('error', 'Pinjaman sudah memiliki catatan pengembalian, tidak dapat dihapus.');
         }
-
-        // Mulai transaksi database untuk memastikan konsistensi data
-        DB::beginTransaction();
         try {
+            DB::beginTransaction();
+            PengeluaranSimpanPinjam::where('kode', 'PINJ-' . $pinjaman->created_at->format('YmdHis'))
+                ->delete();
             $pinjaman->delete();
             DB::commit();
             return redirect()->route('pinjaman.index')

@@ -24,7 +24,7 @@
                             </tr>
                             <tr>
                                 <th>Tanggal</th>
-                                <td>{{ $simpanan->tgl_simpan_formated }}</td>
+                                <td>{{ date('d F Y', strtotime($simpanan->tgl_simpan)) }}</td>
                             </tr>
                             <tr>
                                 <th>Keterangan</th>
@@ -32,7 +32,7 @@
                             </tr>
                         </table>
                     </div>
-                    
+
                     <div class="mt-4">
                         <a href="{{ route('simpanan.edit', $simpanan->id) }}" class="btn btn-warning">
                             <i class="fas fa-edit"></i> Edit
@@ -40,7 +40,8 @@
                         <form action="{{ route('simpanan.destroy', $simpanan->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus data simpanan ini?')">
+                            <button type="submit" class="btn btn-danger"
+                                onclick="return confirm('Apakah Anda yakin ingin menghapus data simpanan ini?')">
                                 <i class="fas fa-trash"></i> Hapus
                             </button>
                         </form>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\FotoCopy;
 
 use App\Http\Controllers\Controller;
+use App\Models\IncomeBadanUsaha;
 use App\Models\PembayaranFotoCopy;
 use App\Models\PengeluaranFotoCopy;
 use Illuminate\Http\Request;
@@ -17,8 +18,9 @@ class LaporanFotoCopyController extends Controller
         $tanggalMulai = $request->input('tanggal_mulai') ?? now()->startOfMonth()->format('Y-m-d');
         $tanggalSelesai = $request->input('tanggal_selesai') ?? now()->endOfMonth()->format('Y-m-d');
 
-        $pembayaran = PembayaranFotoCopy::whereBetween('tgl_pembayaran', [$tanggalMulai, $tanggalSelesai])
-            ->orderBy('tgl_pembayaran')
+        $pembayaran = IncomeBadanUsaha::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+            ->whereBetween('created_at', [$tanggalMulai, $tanggalSelesai])
+            ->orderBy('created_at')
             ->get();
 
         $pengeluaran = PengeluaranFotoCopy::whereBetween('tgl_pengeluaran', [$tanggalMulai, $tanggalSelesai])

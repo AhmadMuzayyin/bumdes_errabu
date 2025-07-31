@@ -5,6 +5,7 @@ namespace App\Http\Controllers\FotoCopy;
 use App\Http\Controllers\Controller;
 use App\Models\HargaFotoCopy;
 use App\Models\Income;
+use App\Models\IncomeBadanUsaha;
 use App\Models\PembayaranFotoCopy;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,6 +43,11 @@ class PembayaranFotoCopyController extends Controller
                 'total_pembayaran' => $request->total_pembayaran,
                 'tgl_pembayaran' => $request->tgl_pembayaran,
             ]);
+            IncomeBadanUsaha::create([
+                'badan_usaha_id' => auth()->user()->badan_usaha->id,
+                'jenis_pemasukan' => 'Pendapatan Usaha',
+                'nominal' => $request->total_pembayaran,
+            ]);
             DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil ditambahkan');
         } catch (\Throwable $th) {
@@ -63,13 +69,12 @@ class PembayaranFotoCopyController extends Controller
 
         try {
             DB::beginTransaction();
+            IncomeBadanUsaha::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+                ->where('jenis_pemasukan', 'Pendapatan Usaha')
+                ->where('nominal', $pembayaran->total_pembayaran)
+                ->where('created_at', $pembayaran->created_at)
+                ->update(['nominal' => $request->total_pembayaran]);
             $pembayaran->update($request->all());
-            Income::where('badan_usaha_id', auth()->user()->badan_usaha->id)
-                ->where('tanggal', $pembayaran->tgl_pembayaran)
-                ->update([
-                    'nominal' => $request->total_pembayaran,
-                    'tanggal' => $request->tgl_pembayaran,
-                ]);
             DB::commit();
             return redirect()->back()->with('success', 'Pembayaran berhasil diubah');
         } catch (\Throwable $th) {
@@ -85,7 +90,6 @@ class PembayaranFotoCopyController extends Controller
     {
         try {
             $pembayaran->delete();
-
             return redirect()->back()->with('success', 'Pembayaran berhasil dihapus');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', 'Pembayaran gagal dihapus: ' . $th->getMessage());

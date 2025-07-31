@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\IncomeBadanUsaha;
 use Illuminate\Http\Request;
 use App\Models\PengembalianPinjaman;
 use App\Models\Pinjamans;
@@ -12,27 +13,16 @@ use Illuminate\Support\Facades\Log;
 
 class PengembalianPinjamanController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $pengembalian = PengembalianPinjaman::with(['pinjaman', 'pinjaman.nasabah'])->latest()->get();
         return view('simpan-pinjam.pengembalian-pinjaman.index', compact('pengembalian'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         $nasabah = Nasabah::all();
         return view('simpan-pinjam.pengembalian-pinjaman.create', compact('nasabah'));
     }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -50,29 +40,26 @@ class PengembalianPinjamanController extends Controller
         DB::beginTransaction();
         try {
             $pinjaman = Pinjamans::findOrFail($request->pinjamans_id);
-
-            // Buat record pengembalian pinjaman
             $pengembalian = PengembalianPinjaman::create([
                 'pinjamans_id' => $request->pinjamans_id,
                 'nominal_cicilan' => $request->nominal_cicilan,
                 'tgl_pengembalian_sementara' => $request->tgl_pengembalian_sementara,
                 'status' => 'Belum Lunas',
             ]);
-
-            // Cek total pengembalian
             $totalPengembalian = PengembalianPinjaman::where('pinjamans_id', $request->pinjamans_id)->sum('nominal_cicilan');
-
-            // Update status pinjaman jika sudah lunas
             if ($totalPengembalian >= $pinjaman->original_nominal) {
                 $pinjaman->update([
                     'status' => 'Lunas',
                     'nominal_pengembalian' => $totalPengembalian
                 ]);
-
-                // Update status semua cicilan menjadi lunas
                 PengembalianPinjaman::where('pinjamans_id', $request->pinjamans_id)->update(['status' => 'Lunas']);
                 $pinjaman->update([
                     'status' => 'Lunas',
+                ]);
+                IncomeBadanUsaha::create([
+                    'badan_usaha_id' => auth()->user()->badan_usaha->id,
+                    'jenis_pemasukan' => 'Pendapatan Usaha',
+                    'nominal' => $totalPengembalian
                 ]);
             }
 
@@ -86,29 +73,17 @@ class PengembalianPinjamanController extends Controller
                 ->withInput();
         }
     }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $pengembalian = PengembalianPinjaman::with(['pinjaman', 'pinjaman.nasabah'])->findOrFail($id);
         return view('simpan-pinjam.pengembalian-pinjaman.show', compact('pengembalian'));
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $pengembalian = PengembalianPinjaman::findOrFail($id);
         $pinjaman = Pinjamans::all();
         return view('simpan-pinjam.pengembalian-pinjaman.edit', compact('pengembalian', 'pinjaman'));
     }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $pengembalian = PengembalianPinjaman::findOrFail($id);
@@ -188,10 +163,6 @@ class PengembalianPinjamanController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
-
-    /**
-     * Get pinjaman by nasabah id.
-     */
     public function getPinjamanByNasabah($id)
     {
         $pinjaman = Pinjamans::where('nasabah_id', $id)

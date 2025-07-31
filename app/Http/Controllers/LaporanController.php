@@ -41,16 +41,11 @@ class LaporanController extends Controller
         $totalDanaKeluar = 0;
 
         // 1. General Income & Spending
-        $incomeQuery = Income::with('badan_usaha')
-            ->whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai])
+        $incomeQuery = Income::whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai])
             ->orderBy('tanggal', 'asc');
 
         $spendingQuery = Spending::whereBetween('tanggal', [$tanggalMulai, $tanggalSelesai])
             ->orderBy('tanggal', 'asc');
-
-        if ($badanUsahaId) {
-            $incomeQuery->where('badan_usaha_id', $badanUsahaId);
-        }
 
         $incomes = $incomeQuery->get();
         $spendings = $spendingQuery->get();
@@ -126,9 +121,9 @@ class LaporanController extends Controller
 
         // Simpan Pinjam income: simpanan, pengembalian pinjaman (termasuk bunga)
         $summaryDanaMasuk['simpan_pinjam'] = $simpanan->sum(function ($item) {
-            return (float) $item->getOriginalNominalAttribute();
+            return (float) $item->getOriginalNominalAttribute;
         }) + $pengembalianPinjaman->sum(function ($item) {
-            return (float) $item->getOriginalNominalCicilanAttribute();
+            return (float) $item->nominal_cicilan;
         });
 
         // Simpan Pinjam expenses: pengambilan simpanan, pinjaman, pengeluaran
@@ -137,13 +132,13 @@ class LaporanController extends Controller
         }) + $pinjaman->sum(function ($item) {
             return (float) $item->getOriginalNominalAttribute();
         }) + $pengeluaranSP->sum(function ($item) {
-            return (float) $item->getOriginalJumlahAttribute();
+            return (float) $item->jumlah;
         });
 
         $totalDanaMasuk += $summaryDanaMasuk['simpan_pinjam'];
         $totalDanaKeluar += $summaryDanaKeluar['simpan_pinjam'];
 
-        return view('brilink.laporan.index', compact(
+        return view('laporan.index', compact(
             'tanggalMulai',
             'tanggalSelesai',
             'badanUsahaId',

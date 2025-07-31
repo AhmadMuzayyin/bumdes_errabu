@@ -5,6 +5,7 @@ namespace App\Http\Controllers\BriLink;
 use App\Http\Controllers\Controller;
 use App\Models\BriLinkSetorTunai;
 use App\Models\Income;
+use App\Models\IncomeBadanUsaha;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -33,9 +34,9 @@ class SetorTunaiController extends Controller
         try {
             DB::beginTransaction();
             BriLinkSetorTunai::create($request->all());
-            Income::create([
+            IncomeBadanUsaha::create([
                 'badan_usaha_id' => auth()->user()->badan_usaha->id,
-                'tanggal' => $request->tgl_setor_tunai,
+                'jenis_pemasukan' => 'Pendapatan Usaha',
                 'nominal' => $request->nominal,
             ]);
             DB::commit();
@@ -60,13 +61,14 @@ class SetorTunaiController extends Controller
 
         try {
             DB::beginTransaction();
-            $setor_tunai->update($request->all());
-            Income::where('badan_usaha_id', auth()->user()->badan_usaha->id)
-                ->where('tanggal', $setor_tunai->tgl_setor_tunai)
+            IncomeBadanUsaha::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+                ->where('jenis_pemasukan', 'Pendapatan Usaha')
+                ->where('nominal', $setor_tunai->nominal)
+                ->where('created_at', $setor_tunai->created_at)
                 ->update([
                     'nominal' => $request->nominal,
-                    'tanggal' => Carbon::parse($request->tgl_setor_tunai),
                 ]);
+            $setor_tunai->update($request->all());
             DB::commit();
             return redirect()->route('brilink.setor-tunai.index')
                 ->with('success', 'Data setor tunai berhasil diperbarui');
@@ -81,6 +83,11 @@ class SetorTunaiController extends Controller
     {
         try {
             DB::beginTransaction();
+            IncomeBadanUsaha::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+                ->where('jenis_pemasukan', 'Pendapatan Usaha')
+                ->where('nominal', $setor_tunai->nominal)
+                ->where('created_at', $setor_tunai->created_at)
+                ->delete();
             $setor_tunai->delete();
             DB::commit();
             return redirect()->route('brilink.setor-tunai.index')

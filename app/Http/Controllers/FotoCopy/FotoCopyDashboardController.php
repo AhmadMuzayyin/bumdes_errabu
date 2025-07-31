@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\FotoCopy;
 
 use App\Http\Controllers\Controller;
+use App\Models\BadanUsaha;
 use App\Models\HargaFotoCopy;
+use App\Models\IncomeBadanUsaha;
 use App\Models\PembayaranFotoCopy;
 use App\Models\PengeluaranFotoCopy;
 use App\Models\Spending;
@@ -38,7 +40,7 @@ class FotoCopyDashboardController extends Controller
         // Total pembayaran dan pengeluaran
         $totalPembayaran = PembayaranFotoCopy::sum('total_pembayaran');
         $totalPengeluaran = PengeluaranFotoCopy::sum('harga');
-        $totalPemasukan = Spending::where('badan_usaha_id', auth()->user()->badan_usaha->id)->sum('nominal');
+        $totalPemasukan = IncomeBadanUsaha::where('badan_usaha_id', auth()->user()->badan_usaha->id)->sum('nominal');
 
         return view('fotocopy.dashboard', compact(
             'harga',

@@ -41,7 +41,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <h3 class="card-title">Laporan Pembayaran</h3>
+                        <h3 class="card-title">Laporan Pemasukan</h3>
                         <button type="button" class="btn btn-success"
                             onclick="exportTableToExcel('tabelPembayaran', 'laporan_pembayaran')">
                             <i class="fas fa-file-excel"></i> Export Excel
@@ -55,18 +55,18 @@
                                 <tr>
                                     <th>No</th>
                                     <th>Jumlah</th>
-                                    <th>Total</th>
+                                    <th>Keterangan</th>
                                     <th>Tanggal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @php $totalPembayaran = 0; @endphp
                                 @forelse ($pembayaran as $item)
-                                    @php $totalPembayaran += $item->total_pembayaran * $item->jumlah; @endphp
+                                    @php $totalPembayaran += $item->OriginalNominal; @endphp
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->jumlah }}</td>
-                                        <td>{{ number_format($item->total_pembayaran, 0, ',', '.') }}</td>
+                                        <td>{{ $item->nominal }}</td>
+                                        <td>{{ $item->jenis_pemasukan }}</td>
                                         <td>{{ \Carbon\Carbon::parse($item->tgl_pembayaran)->format('d/m/Y') }}</td>
                                     </tr>
                                 @empty
@@ -77,9 +77,8 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <th colspan="2">Total</th>
-                                    <th>Rp. {{ number_format($totalPembayaran, 0, ',', '.') }}</th>
-                                    <th></th>
+                                    <th colspan="1">Total</th>
+                                    <th colspan="3">Rp. {{ number_format($totalPembayaran, 0, ',', '.') }}</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -133,8 +132,7 @@
                             <tfoot>
                                 <tr>
                                     <th colspan="3">Total</th>
-                                    <th>Rp. {{ number_format($totalPengeluaran, 0, ',', '.') }}</th>
-                                    <th colspan="2"></th>
+                                    <th colspan="3">Rp. {{ number_format($totalPengeluaran, 0, ',', '.') }}</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -154,7 +152,7 @@
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
-                                <th>Total Pembayaran</th>
+                                <th>Total Pemasukan</th>
                                 <td>Rp. {{ number_format($totalPembayaran ?? 0, 0, ',', '.') }}</td>
                             </tr>
                             <tr>

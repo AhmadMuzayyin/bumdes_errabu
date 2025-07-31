@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BriLinkSetorTunai;
 use App\Models\BriLinkTarikTunai;
 use App\Models\BriLinkBayarTagihanPln;
+use App\Models\IncomeBadanUsaha;
 use App\Models\PengeluaranBriLink;
 use App\Models\Spending;
 use Carbon\Carbon;
@@ -34,9 +35,9 @@ class LaporanController extends Controller
         $pengeluaran = PengeluaranBriLink::whereBetween('tgl_pengeluaran', [$start, $end])
             ->orderBy('tgl_pengeluaran')
             ->get();
-        $pemasukan = Spending::where('badan_usaha_id', auth()->user()->badan_usaha->id)
-            ->whereBetween('tanggal', [$start, $end])
-            ->orderBy('tanggal')
+        $pemasukan = IncomeBadanUsaha::where('badan_usaha_id', auth()->user()->badan_usaha->id)
+            ->whereBetween('created_at', [$start, $end])
+            ->orderBy('created_at')
             ->get();
 
         $laporan = [
