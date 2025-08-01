@@ -121,7 +121,7 @@ class LaporanController extends Controller
 
         // Simpan Pinjam income: simpanan, pengembalian pinjaman (termasuk bunga)
         $summaryDanaMasuk['simpan_pinjam'] = $simpanan->sum(function ($item) {
-            return (float) $item->getOriginalNominalAttribute;
+            return (float) $item->getOriginalNominalAttribute();
         }) + $pengembalianPinjaman->sum(function ($item) {
             return (float) $item->nominal_cicilan;
         });

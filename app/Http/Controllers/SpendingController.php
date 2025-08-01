@@ -30,8 +30,6 @@ class SpendingController extends Controller
                 return redirect()->back()->with('error', 'Saldo tidak mencukupi untuk dana keluar ini');
             }
             Spending::create($request->validated());
-            BadanUsaha::where('id', $request['badan_usaha_id'])
-                ->update(['saldo' => $request['nominal']]);
             IncomeBadanUsaha::create([
                 'badan_usaha_id' => $request['badan_usaha_id'],
                 'jenis_pemasukan' => 'Modal Usaha',
@@ -49,8 +47,6 @@ class SpendingController extends Controller
     {
         try {
             DB::beginTransaction();
-            BadanUsaha::where('id', $request['badan_usaha_id'])
-                ->update(['saldo' => $request['nominal']]);
             IncomeBadanUsaha::where('badan_usaha_id', $request['badan_usaha_id'])
                 ->where('jenis_pemasukan', 'Modal Usaha')
                 ->where('nominal', $spending->OriginalNominal)
@@ -68,8 +64,6 @@ class SpendingController extends Controller
     {
         try {
             DB::beginTransaction();
-            BadanUsaha::where('id', $spending['badan_usaha_id'])
-                ->update(['saldo' => 0]);
             IncomeBadanUsaha::where('badan_usaha_id', $spending['badan_usaha_id'])
                 ->where('jenis_pemasukan', 'Modal Usaha')
                 ->where('nominal', $spending->OriginalNominal)

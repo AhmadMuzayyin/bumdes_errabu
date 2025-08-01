@@ -12,7 +12,7 @@
                             <h3 class="card-title">Laporan Keuangan</h3>
                         </div>
                         <div class="col-auto">
-                            <div class="dropdown">
+                            {{-- <div class="dropdown">
                                 <button class="btn btn-danger dropdown-toggle" type="button" id="exportDropdown"
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fas fa-file-pdf"></i> Export PDF
@@ -22,7 +22,7 @@
                                     <a class="dropdown-item" href="#" id="exportIncome">Laporan Dana Masuk</a>
                                     <a class="dropdown-item" href="#" id="exportExpense">Laporan Dana Keluar</a>
                                 </div>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -173,6 +173,7 @@
 
                             <!-- Simpan Pinjam Tab Content -->
                             <div class="tab-content mt-3" id="simpanPinjamTabsContent">
+                                <!-- Simpanan -->
                                 <div class="tab-pane fade show active" id="simpanan" role="tabpanel">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-striped datatable">
@@ -181,7 +182,6 @@
                                                     <th>#</th>
                                                     <th>Tanggal</th>
                                                     <th>Nasabah</th>
-                                                    <th>Kategori</th>
                                                     <th class="text-right">Nominal</th>
                                                 </tr>
                                             </thead>
@@ -193,12 +193,11 @@
                                                         <td>{{ \Carbon\Carbon::parse($item->tgl_simpan)->format('d/m/Y') }}
                                                         </td>
                                                         <td>{{ $item->nasabah->nama ?? 'N/A' }}</td>
-                                                        <td>{{ ucfirst($item->kategori) }}</td>
                                                         <td class="text-right">{{ $item->nominal }}</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="5" class="text-center">Tidak ada data simpanan
+                                                        <td colspan="4" class="text-center">Tidak ada data simpanan
                                                         </td>
                                                     </tr>
                                                 @endforelse
@@ -216,7 +215,6 @@
                                                     <th>#</th>
                                                     <th>Tanggal</th>
                                                     <th>Nasabah</th>
-                                                    <th>Kategori</th>
                                                     <th class="text-right">Nominal</th>
                                                 </tr>
                                             </thead>
@@ -228,12 +226,11 @@
                                                         <td>{{ \Carbon\Carbon::parse($item->tgl_pengambilan)->format('d/m/Y') }}
                                                         </td>
                                                         <td>{{ $item->nasabah->nama ?? 'N/A' }}</td>
-                                                        <td>{{ ucfirst($item->kategori) }}</td>
                                                         <td class="text-right">{{ $item->nominal }}</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="5" class="text-center">Tidak ada data pengambilan
+                                                        <td colspan="4" class="text-center">Tidak ada data pengambilan
                                                             simpanan</td>
                                                     </tr>
                                                 @endforelse
@@ -264,8 +261,11 @@
                                                         <td>{{ \Carbon\Carbon::parse($item->tgl_pinjam)->format('d/m/Y') }}
                                                         </td>
                                                         <td>{{ $item->nasabah->nama ?? 'N/A' }}</td>
-                                                        <td class="text-right">{{ $item->nominal }}</td>
-                                                        <td class="text-right">{{ $item->nominal_pengembalian }}</td>
+                                                        <td class="text-right">
+                                                            {{ $item->nominal }}</td>
+                                                        <td class="text-right">
+                                                            Rp.{{ number_format($item->nominal_pengembalian, 0, ',', '.') }}
+                                                        </td>
                                                         <td>{{ $item->status }}</td>
                                                     </tr>
                                                 @empty
@@ -299,7 +299,7 @@
                                                         <td>{{ $no++ }}</td>
                                                         <td>{{ \Carbon\Carbon::parse($item->tgl_pengembalian_sementara)->format('d/m/Y') }}
                                                         </td>
-                                                        <td>{{ $item->nasabah->nama ?? 'N/A' }}</td>
+                                                        <td>{{ $item->pinjaman->nasabah->nama ?? 'N/A' }}</td>
                                                         <td class="text-right">{{ $item->nominal_cicilan }}</td>
                                                         <td>{{ $item->status }}</td>
                                                     </tr>
@@ -336,7 +336,8 @@
                                                         </td>
                                                         <td>{{ $item->kode }}</td>
                                                         <td>{{ $item->tujuan }}</td>
-                                                        <td class="text-right">{{ $item->jumlah }}</td>
+                                                        <td class="text-right">
+                                                            Rp.{{ number_format($item->harga, 0, ',', '.') }}</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
@@ -375,7 +376,6 @@
                                                 <tr>
                                                     <th>#</th>
                                                     <th>Tanggal</th>
-                                                    <th>Nama</th>
                                                     <th>Jumlah Lembar</th>
                                                     <th class="text-right">Nominal</th>
                                                 </tr>
@@ -387,9 +387,10 @@
                                                         <td>{{ $no++ }}</td>
                                                         <td>{{ \Carbon\Carbon::parse($item->tgl_pembayaran)->format('d/m/Y') }}
                                                         </td>
-                                                        <td>{{ $item->nama }}</td>
-                                                        <td>{{ $item->jumlah_lembar }}</td>
-                                                        <td class="text-right">{{ $item->total_pembayaran }}</td>
+                                                        <td>{{ $item->jumlah }}</td>
+                                                        <td class="text-right">
+                                                            Rp.{{ number_format($item->total_pembayaran, 0, ',', '.') }}
+                                                        </td>
                                                     </tr>
                                                 @empty
                                                     <tr>
@@ -421,8 +422,10 @@
                                                         <td>{{ $no++ }}</td>
                                                         <td>{{ \Carbon\Carbon::parse($item->tgl_pengeluaran)->format('d/m/Y') }}
                                                         </td>
-                                                        <td>{{ $item->keterangan }}</td>
-                                                        <td class="text-right">{{ $item->jumlah }}</td>
+                                                        <td>{{ $item->jenis_pengeluaran }}</td>
+                                                        <td class="text-right">
+                                                            Rp.{{ number_format($item->harga, 0, ',', '.') }}
+                                                        </td>
                                                     </tr>
                                                 @empty
                                                     <tr>
@@ -469,7 +472,6 @@
                                                     <th>Nama</th>
                                                     <th>No. Rekening</th>
                                                     <th class="text-right">Nominal</th>
-                                                    <th class="text-right">Admin</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -482,8 +484,8 @@
                                                         <td>{{ $item->kode_transaksi }}</td>
                                                         <td>{{ $item->nama }}</td>
                                                         <td>{{ $item->norek }}</td>
-                                                        <td class="text-right">{{ $item->nominal }}</td>
-                                                        <td class="text-right">{{ $item->admin_fee ?? 0 }}</td>
+                                                        <td class="text-right">
+                                                            Rp.{{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
@@ -508,7 +510,6 @@
                                                     <th>Nama</th>
                                                     <th>No. Rekening</th>
                                                     <th class="text-right">Nominal</th>
-                                                    <th class="text-right">Admin</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -521,8 +522,8 @@
                                                         <td>{{ $item->kode_transaksi }}</td>
                                                         <td>{{ $item->nama }}</td>
                                                         <td>{{ $item->norek }}</td>
-                                                        <td class="text-right">{{ $item->nominal }}</td>
-                                                        <td class="text-right">{{ $item->admin_fee ?? 0 }}</td>
+                                                        <td class="text-right">
+                                                            Rp.{{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
@@ -547,7 +548,6 @@
                                                     <th>Nama</th>
                                                     <th>ID Pelanggan</th>
                                                     <th class="text-right">Nominal</th>
-                                                    <th class="text-right">Admin</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -560,8 +560,8 @@
                                                         <td>{{ $item->kode }}</td>
                                                         <td>{{ $item->nama }}</td>
                                                         <td>{{ $item->id_pelanggan }}</td>
-                                                        <td class="text-right">{{ $item->nominal }}</td>
-                                                        <td class="text-right">{{ $item->admin_fee ?? 0 }}</td>
+                                                        <td class="text-right">
+                                                            Rp.{{ number_format($item->nominal, 0, ',', '.') }}</td>
                                                     </tr>
                                                 @empty
                                                     <tr>
