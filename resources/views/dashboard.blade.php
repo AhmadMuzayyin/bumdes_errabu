@@ -88,6 +88,7 @@
                                 <thead>
                                     <th>#</th>
                                     <th>Tujuan</th>
+                                    <th>Keterangan</th>
                                     <th>Nominal</th>
                                     <th>Tanggal</th>
                                 </thead>
@@ -95,7 +96,8 @@
                                     @foreach ($manual_spending as $pengeluaran)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $pengeluaran->tujuan }}</td>
+                                            <td>{{ $pengeluaran->badan_usaha->nama }}</td>
+                                            <td>{{ $pengeluaran->keterangan }}</td>
                                             <td>{{ $pengeluaran->nominal }}</td>
                                             <td>{{ date('d F Y', strtotime($pengeluaran->tanggal)) }}</td>
                                         </tr>

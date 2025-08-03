@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\IncomeController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\NeracaAdminController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\SpendingController;
 use App\Http\Controllers\TransactionController;
@@ -43,6 +44,7 @@ Route::controller(TransactionController::class)->as('transaction.')->group(funct
     Route::post('/transaction/{transaction}/update', 'update')->name('update');
     Route::get('/transaction/{transaction}/destroy', 'destroy')->name('destroy');
 });
+Route::resource('neraca-admin', NeracaAdminController::class);
 Route::controller(LaporanController::class)->middleware(['auth', 'admin'])->as('laporan.umum.')->group(function () {
     Route::get('/laporan-umum', 'index')->name('index');
     Route::post('/laporan-umum/export-pdf', 'exportPdf')->name('export-pdf');

@@ -118,6 +118,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('neraca-simpanpinjam.index') }}"
+                                class="nav-link {{ request()->routeIs('neraca-simpanpinjam.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="bar-chart-outline"></ion-icon>
+                                <p>
+                                    Neraca Keuangan
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('setting-pinjaman.index') }}"
                                 class="nav-link {{ request()->routeIs('setting-pinjaman.*') ? 'active' : '' }}">
                                 <ion-icon class="nav-icon" name="settings"></ion-icon>
@@ -185,6 +194,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{ route('fotocopy.neraca-fotocopy.index') }}"
+                                class="nav-link {{ request()->routeIs('fotocopy.neraca-fotocopy.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="bar-chart-outline"></ion-icon>
+                                <p>
+                                    Neraca Keuangan
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('fotocopy.laporan.index') }}"
                                 class="nav-link {{ request()->routeIs('fotocopy.laporan.*') ? 'active' : '' }}">
                                 <ion-icon class="nav-icon" name="document-text"></ion-icon>
@@ -221,6 +239,15 @@
                                 <ion-icon class="nav-icon" name="trending-down-outline"></ion-icon>
                                 <p>
                                     Dana Keluar
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('brilink.neraca-bri.index') }}"
+                                class="nav-link {{ request()->routeIs('brilink.neraca-bri.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="bar-chart-outline"></ion-icon>
+                                <p>
+                                    Neraca Keuangan
                                 </p>
                             </a>
                         </li>
@@ -296,6 +323,15 @@
                                 <ion-icon class="nav-icon" name="cash"></ion-icon>
                                 <p>
                                     Dana Keluar
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('neraca-admin.index') }}"
+                                class="nav-link {{ request()->routeIs('neraca-admin.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="bar-chart-outline"></ion-icon>
+                                <p>
+                                    Neraca Keuangan
                                 </p>
                             </a>
                         </li>

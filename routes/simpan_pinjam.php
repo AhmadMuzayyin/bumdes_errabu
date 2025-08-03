@@ -10,6 +10,7 @@ use App\Http\Controllers\PengembalianPinjamanController;
 use App\Http\Controllers\PengeluaranSimpanPinjamController;
 use App\Http\Controllers\LaporanSimpanPinjamController;
 use App\Http\Controllers\SettingPinjamanController;
+use App\Http\Controllers\SimpanPinjam\NeracaController;
 use App\Models\IncomeBadanUsaha;
 
 // Route Simpan Pinjam di-grup berdasarkan fungsionalitas
@@ -54,7 +55,7 @@ Route::middleware(['auth', 'simpan.pinjam'])->group(function () {
         ->name('setting-pinjaman.index');
     Route::put('setting-pinjaman/{settingPinjaman}', [SettingPinjamanController::class, 'update'])
         ->name('setting-pinjaman.update');
-
+    Route::resource('neraca-simpanpinjam', NeracaController::class);
     // Laporan - Grouped with prefix and name
     Route::prefix('laporan')->name('laporan.')->group(function () {
         // Halaman utama laporan
