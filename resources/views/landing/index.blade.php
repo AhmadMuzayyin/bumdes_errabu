@@ -304,25 +304,25 @@
                     <div class="tittle">
                         <h2>DANA MASUK</h2>
                         <hr>
-                        <p>Penghasilan Dari Setiap Badan Usaha Milik Desa Errabu.</p>
+                        <p>Penghasilan Dari Badan Usaha Milik Desa Errabu.</p>
                     </div>
                     <div class="row">
                         <table class="table">
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Badan Usaha</th>
-                                    <th>Operator</th>
+                                    <th>Sumber Dana</th>
                                     <th>Dana Masuk</th>
+                                    <th>Tanggal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($keuangan as $dana)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $dana }}</td>
-                                        <td>{{ $dana }}</td>
+                                        <td>{{ $dana->sumber_dana }}</td>
                                         <td>{{ $dana->nominal }}</td>
+                                        <td>{{ $dana->tanggal }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -349,7 +349,7 @@
                                 @foreach ($pengeluaran as $spd)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $spd->tujuan }}</td>
+                                        <td>{{ $spd->keterangan }}-{{ $spd->badan_usaha->nama }}</td>
                                         <td>{{ $spd->nominal }}</td>
                                         <td>{{ date('d F Y', strtotime($spd->tanggal)) }}</td>
                                     </tr>
