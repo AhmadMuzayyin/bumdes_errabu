@@ -212,7 +212,7 @@
                                         <li class="col-xs-6">
                                             <p> Pembangunan Jangka Pendek</p>
                                             <p> Mengembangkan dan Menjaga serta melestarikan ada istiadat desa terutama
-                                                yang telah mengakar di desa Lobuk.</p>
+                                                yang telah mengakar di desa Errabu.</p>
                                             <p> Meningkatkan pelayanan dalam bidang pemerintahan kepada warga
                                                 masyarakat. </p>
                                             <p> Meningkatkan sarana dan prasarana ekonomi warga desa dengan perbaikan
@@ -228,7 +228,7 @@
                 </div>
             </section>
 
-            <section class="sec-100px event" id="potensi_desa">
+            {{-- <section class="sec-100px event" id="potensi_desa">
                 <div class="container">
                     <div class="tittle">
                         <h2>POTENSI DESA</h2>
@@ -269,7 +269,8 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> --}}
+
             <section class="sec-100px event" id="badan_usaha">
                 <div class="container">
                     <div class="tittle">
@@ -370,7 +371,7 @@
 
                 <ul class="foot-link">
                     <li><a href="{{ url('/') }}">Home </a></li>
-                    <li><a href="#potensi_desa"> POTENSI DESA </a></li>
+                    {{-- <li><a href="#potensi_desa"> POTENSI DESA </a></li> --}}
                     <li><a href="#badan_usaha"> BADAN USAHA </a></li>
                     <li><a href="#keuangan"> KEUANGAN </a></li>
                 </ul>
