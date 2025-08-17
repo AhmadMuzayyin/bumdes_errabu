@@ -291,20 +291,20 @@
 
                     @if (auth()->user()->role == 'admin')
                         <li class="nav-item">
-                            <a href="{{ route('operator.index') }}"
-                                class="nav-link {{ request()->routeIs('operator.*') ? 'active' : '' }}">
-                                <ion-icon class="nav-icon" name="person-circle"></ion-icon>
-                                <p>
-                                    Operator
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="{{ route('badan_usaha.index') }}"
                                 class="nav-link {{ request()->routeIs('badan_usaha.*') ? 'active' : '' }}">
                                 <ion-icon class="nav-icon" name="briefcase"></ion-icon>
                                 <p>
                                     Badan Usaha
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('operator.index') }}"
+                                class="nav-link {{ request()->routeIs('operator.*') ? 'active' : '' }}">
+                                <ion-icon class="nav-icon" name="person-circle"></ion-icon>
+                                <p>
+                                    Operator
                                 </p>
                             </a>
                         </li>

@@ -45,7 +45,7 @@
         <!-- Header -->
         <header>
             <!-- Top Bar -->
-            <div class="container">
+            {{-- <div class="container">
                 <div class="top-bar">
                     <div class="open-time">
                         <p><i class="ion-ios-clock-outline"></i> Badan Usaha Milik Desa (BUMDes) Desa Errabu Kec. Bluto
@@ -55,7 +55,7 @@
                         <p><i class="ion-headphone"></i> 1800 123 4659</p>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <!-- Logo -->
             <div class="container">
