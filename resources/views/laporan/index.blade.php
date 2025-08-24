@@ -456,6 +456,10 @@
                                     <a class="nav-link" id="bayar-tab" data-toggle="tab" href="#bayar"
                                         role="tab">Bayar Tagihan PLN</a>
                                 </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="pengeluaran-tab" data-toggle="tab" href="#pengeluaran"
+                                        role="tab">Pengeluaran</a>
+                                </li>
                             </ul>
 
                             <!-- BRI Link Tab Content -->
@@ -497,7 +501,6 @@
                                         </table>
                                     </div>
                                 </div>
-
                                 <!-- Tarik Tunai -->
                                 <div class="tab-pane fade" id="tarik" role="tabpanel">
                                     <div class="table-responsive">
@@ -535,7 +538,6 @@
                                         </table>
                                     </div>
                                 </div>
-
                                 <!-- Bayar Tagihan PLN -->
                                 <div class="tab-pane fade" id="bayar" role="tabpanel">
                                     <div class="table-responsive">
@@ -567,6 +569,40 @@
                                                     <tr>
                                                         <td colspan="7" class="text-center">Tidak ada data pembayaran
                                                             tagihan PLN</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- Pengeluaran BRI Link -->
+                                <div class="tab-pane fade" id="pengeluaran" role="tabpanel">
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered table-striped datatable">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Tanggal</th>
+                                                    <th>Keterangan</th>
+                                                    <th class="text-right">Nominal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @php $no = 1; @endphp
+                                                @forelse($danaKeluar['brilink'] as $item)
+                                                    <tr>
+                                                        <td>{{ $no++ }}</td>
+                                                        <td>{{ \Carbon\Carbon::parse($item->tgl_pengeluaran)->format('d/m/Y') }}
+                                                        </td>
+                                                        <td>{{ $item->jenis_pengeluaran }}</td>
+                                                        <td class="text-right">
+                                                            Rp.{{ number_format($item->harga, 0, ',', '.') }}
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">Tidak ada data pengeluaran
+                                                            bri link</td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>

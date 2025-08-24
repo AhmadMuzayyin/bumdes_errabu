@@ -97,6 +97,10 @@ class LaporanController extends Controller
             'tarik_tunai' => $brilinkTarikTunai,
             'bayar_pln' => $brilinkBayarPln
         ];
+        $pengeluaranBRILink = PengeluaranBriLink::whereBetween('tgl_pengeluaran', [$tanggalMulai, $tanggalSelesai])
+            ->orderBy('tgl_pengeluaran')
+            ->get();
+        $danaKeluar['brilink'] = $pengeluaranBRILink;
 
         $summaryDanaMasuk['brilink'] = $brilinkSetorTunai->sum('nominal') +
             $brilinkTarikTunai->sum('nominal') +
@@ -290,6 +294,11 @@ class LaporanController extends Controller
         });
 
         $totalDanaMasuk += $summaryDanaMasuk['brilink'];
+
+        $pengeluaranBRILink = PengeluaranBriLink::whereBetween('tgl_pengeluaran', [$tanggalMulai, $tanggalSelesai])
+            ->orderBy('tgl_pengeluaran')
+            ->get();
+        $danaKeluar['brilink'] = $pengeluaranBRILink;
 
         // 4. Simpan Pinjam data
         $simpanan = Simpanan::whereBetween('tgl_simpan', [$tanggalMulai, $tanggalSelesai])->get();
